@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Environment & credentials
+.env
+.env.local
+config.json
+
+# Local data & logs
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+dossiers/*.csv
+dossiers/*.pdf
+screenshots/*.png
+scratch/
+*.log
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

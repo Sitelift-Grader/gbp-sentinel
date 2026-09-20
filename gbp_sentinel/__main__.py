@@ -1,0 +1,230 @@
+"""CLI interface for GBP Sentinel."""
+
+import argparse
+import sys
+import json
+from pathlib import Path
+from . import config, db, auditor, dossier, scraper, submitter, forum
+
+def cmd_init():
+    """Initialize database and directories."""
+    db.init_db()
+    print("Database en directorystructuur zijn geïnitialiseerd.")
+
+def cmd_scan(args):
+    """Scan Google Maps for profiles."""
+    db.init_db()
+    queries = [q.strip() for q in args.queries.split(",") if q.strip()]
+    if not queries:
+        queries = [args.name]
+
+    print(f"Starten van scan voor '{args.name}' met {len(queries)} zoekopdrachten...")
+    sc = scraper.GbpScraper(headless=not args.headed)
+    profiles = sc.run_search(queries)
+    print(f"Scan voltooid: {len(profiles)} unieke profielen gevonden.")
+
+    db.save_target(args.name, kvk=args.kvk or "", website=args.website or "", hq_address=args.hq or "")
+    db.save_locations(args.name, profiles)
+    print(f"Profielen opgeslagen in database voor target '{args.name}'.")
+
+def cmd_audit(args):
+    """Audit saved locations for policy violations."""
+    target = db.get_target(args.target)
+    if not target:
+        print(f"Fout: Target '{args.target}' niet gevonden in database. Voer eerst een scan uit.")
+        sys.exit(1)
+
+    locations = db.get_locations(args.target)
+    if not locations:
+        print(f"Fout: Geen locaties gevonden voor '{args.target}'.")
+        sys.exit(1)
+
+    print(f"Auditeren van {len(locations)} locaties voor '{args.target}'...")
+    ad = auditor.GbpAuditor()
+    audited = ad.audit_locations(locations, target_hq=target.get("hq_address", ""), target_kvk=target.get("kvk", ""))
+    
+    fraud_count = sum(1 for loc in audited if loc.get("is_fraud"))
+    print(f"Audit voltooid: {fraud_count} overtredingen gedetecteerd op {len(audited)} locaties.")
+    
+    # Update locations in DB
+    db.save_target(args.target, kvk=target.get("kvk", ""), website=target.get("website", ""), hq_address=target.get("hq_address", ""))
+    # replace locations with audited ones
+    conn = db._get_connection()
+    with conn:
+        conn.execute("DELETE FROM locations WHERE target_name = ?", (args.target,))
+    db.save_locations(args.target, audited)
+    print("Geauditeerde locaties bijgewerkt in database.")
+
+def cmd_dossier(args):
+    """Export audited dossier to CSV and generate explanation text."""
+    target = db.get_target(args.target)
+    if not target:
+        print(f"Fout: Target '{args.target}' niet gevonden.")
+        sys.exit(1)
+
+    locations = db.get_locations(args.target)
+    if not locations:
+        print(f"Fout: Geen locaties beschikbaar voor '{args.target}'.")
+        sys.exit(1)
+
+    csv_path = dossier.export_dossier_csv(args.target, locations)
+    explanation = dossier.generate_explanation_text(
+        target_name=args.target,
+        target_kvk=target.get("kvk", ""),
+        target_hq=target.get("hq_address", ""),
+        total_locations=len(locations)
+    )
+
+    print(f"Dossier CSV gegenereerd: {csv_path}")
+    print(f"Verklaringstekst ({len(explanation)} tekens):\n")
+    print(explanation)
+
+def cmd_submit(args):
+    """Submit redressal complaint to Google."""
+    target = db.get_target(args.target)
+    if not target:
+        print(f"Fout: Target '{args.target}' niet gevonden.")
+        sys.exit(1)
+
+    locations = db.get_locations(args.target)
+    if not locations:
+        print(f"Fout: Geen locaties beschikbaar voor '{args.target}'.")
+        sys.exit(1)
+
+    csv_path = dossier.export_dossier_csv(args.target, locations)
+    explanation = dossier.generate_explanation_text(
+        target_name=args.target,
+        target_kvk=target.get("kvk", ""),
+        target_hq=target.get("hq_address", ""),
+        total_locations=len(locations)
+    )
+
+    print(f"Verzenden van Redressal-klacht voor '{args.target}' naar Google...")
+    sub = submitter.RedressalSubmitter(headless=not args.headed)
+    res = sub.run_submit(args.target, csv_path, explanation, public_url=args.url or "")
+
+    print(f"Resultaat: {res.get('message')}")
+    if res.get("case_id"):
+        print(f"*** GOOGLE CASE ID ONTVANGEN: {res.get('case_id')} ***")
+        db.save_submission(
+            target_name=args.target,
+            case_id=res.get("case_id"),
+            email=config.SUBMITTER_EMAIL,
+            dossier_path=str(csv_path),
+            filled_screenshot=res.get("filled_screenshot"),
+            result_screenshot=res.get("result_screenshot"),
+            status="submitted"
+        )
+
+        # Automatically copy forum payload
+        payload = forum.build_community_payload(
+            target_name=args.target,
+            target_kvk=target.get("kvk", ""),
+            target_hq=target.get("hq_address", ""),
+            case_id=res.get("case_id"),
+            audited_locations=locations
+        )
+        copied = forum.copy_to_clipboard(payload["body"])
+        if copied:
+            print("Community escalatietekst staat op het klembord.")
+            print(f"Plaats het topic op: {payload['forum_url']}")
+
+def cmd_forum(args):
+    """Generate forum escalation text and copy to clipboard."""
+    target = db.get_target(args.target)
+    if not target:
+        print(f"Fout: Target '{args.target}' niet gevonden.")
+        sys.exit(1)
+
+    locations = db.get_locations(args.target)
+    payload = forum.build_community_payload(
+        target_name=args.target,
+        target_kvk=target.get("kvk", ""),
+        target_hq=target.get("hq_address", ""),
+        case_id=args.case_id,
+        audited_locations=locations
+    )
+
+    copied = forum.copy_to_clipboard(payload["body"])
+    print(f"Titel voor community:\n{payload['title']}\n")
+    if copied:
+        print("De forumbeschrijving is succesvol naar het klembord gekopieerd.")
+    print(f"Open de communitypagina: {payload['forum_url']}")
+
+def cmd_list():
+    """List all registered targets and submissions."""
+    db.init_db()
+    targets = db.list_targets()
+    submissions = db.list_submissions()
+
+    print("\n--- Geregistreerde targets ---")
+    if not targets:
+        print("Geen targets geregistreerd.")
+    else:
+        for t in targets:
+            print(f"- {t.get('name')} | KvK: {t.get('kvk') or 'N/A'} | HQ: {t.get('hq_address') or 'N/A'}")
+
+    print("\n--- Ingediende klachten & Google Case ID's ---")
+    if not submissions:
+        print("Geen eerdere inzendingen geregistreerd.")
+    else:
+        for s in submissions:
+            print(f"- Target: {s.get('target_name')} | Case ID: {s.get('case_id')} | Datum: {s.get('created_at')} | Status: {s.get('status')}")
+
+def main():
+    parser = argparse.ArgumentParser(description="GBP Sentinel: Anti-Spam & Redressal Automatisering")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # init
+    subparsers.add_parser("init", help="Initialiseer de database")
+
+    # scan
+    p_scan = subparsers.add_parser("scan", help="Scan Google Maps voor een bedrijf")
+    p_scan.add_argument("--name", required=True, help="Officiële naam van het bedrijf")
+    p_scan.add_argument("--queries", required=True, help="Komma-gescheiden zoekopdrachten")
+    p_scan.add_argument("--kvk", help="KvK nummer")
+    p_scan.add_argument("--website", help="Officiële website")
+    p_scan.add_argument("--hq", help="Adres van de hoofdvestiging")
+    p_scan.add_argument("--headed", action="store_true", help="Browser zichtbaar openen")
+
+    # audit
+    p_audit = subparsers.add_parser("audit", help="Voer fraude-audit uit op opgeslagen profielen")
+    p_audit.add_argument("--target", required=True, help="Naam van het target")
+
+    # dossier
+    p_dossier = subparsers.add_parser("dossier", help="Exporteer CSV-dossier en verklaringstekst")
+    p_dossier.add_argument("--target", required=True, help="Naam van het target")
+
+    # submit
+    p_submit = subparsers.add_parser("submit", help="Dien klacht in bij Google Redressal Form")
+    p_submit.add_argument("--target", required=True, help="Naam van het target")
+    p_submit.add_argument("--url", help="Publieke Maps URL")
+    p_submit.add_argument("--headed", action="store_true", help="Browser zichtbaar openen")
+
+    # forum
+    p_forum = subparsers.add_parser("forum", help="Genereer community escalatie en zet op klembord")
+    p_forum.add_argument("--target", required=True, help="Naam van het target")
+    p_forum.add_argument("--case-id", required=True, help="Google Case ID")
+
+    # list
+    subparsers.add_parser("list", help="Toon alle targets en submissions")
+
+    args = parser.parse_args()
+
+    if args.command == "init":
+        cmd_init()
+    elif args.command == "scan":
+        cmd_scan(args)
+    elif args.command == "audit":
+        cmd_audit(args)
+    elif args.command == "dossier":
+        cmd_dossier(args)
+    elif args.command == "submit":
+        cmd_submit(args)
+    elif args.command == "forum":
+        cmd_forum(args)
+    elif args.command == "list":
+        cmd_list()
+
+if __name__ == "__main__":
+    main()
