@@ -1,7 +1,7 @@
 # Industrial-Scale Google Business Profile Spam Network in the Netherlands
 ### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation
 
-**Total Official Google Redressal Submissions:** 63
+**Total Official Google Redressal Submissions:** 64
 **Total Documented Fraudulent Locations:** 838 listings
 
 ## 1. Executive Summary
@@ -80,6 +80,7 @@ The operator systematically clones web templates across 15+ trade and profession
 | Slotenmaker van Dijk | https://slotenmakervandijk.nl | `3-6870000041340` | 6 |
 | SmartDry Vochtbestrijding (Schrijver Vochtbestrijding B.V.) | https://www.smartdry.nl | `3-8415000041950` | 5 |
 | Spouwmuurisolatie Netwerk (spouwmuurisolatieleiden.com) | https://spouwmuurisolatieleiden.com | `7-2518000041314` | 14 |
+| Topspace B.V. / Rent a Skibox Drop-off Network | https://rent-a-skibox.nl | `4-8007000041269` | 33 |
 | Wellhuis Dakwerken B.V. | https://wellhuisdakwerken.nl | `4-1174000041679` | 4 |
 
 ---
