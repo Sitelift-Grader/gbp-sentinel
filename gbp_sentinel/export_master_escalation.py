@@ -86,28 +86,35 @@ def export_master_dossier():
     print(f"Master escalation dossier saved to {out_path} ({len(content)} bytes)")
     
     # Also export condensed version for forum thread
+    cur.execute("SELECT COUNT(*) FROM locations")
+    total_locs = cur.fetchone()[0]
+    
     forum_post = f"""Dear Product Experts and Community Members,
 
-I am writing to request escalation for an industrial-scale Google Maps lead-generation network operating in the Netherlands across 838+ fraudulent listings. 
+I am writing to request escalation for an industrial-scale Google Maps lead-generation network operating in the Netherlands across {total_locs}+ fraudulent listings. 
 
-All 58 clusters have already been formally submitted via the Business Redressal Form and have active Case IDs on file.
+All {len(rows)} clusters have already been formally submitted via the Business Redressal Form and have active Case IDs on file.
 
 Summary of the Network:
-- 15+ Commercial & Professional Niches: Car Dealerships, Pro Deo Lawyers, Moving Companies, Facade Cleaners, Airco Installers, Roofers, Electricians, Glaziers, Painters, Plasterers.
+- 18+ Commercial & Professional Niches: Car Dealerships, Pro Deo Lawyers, Moving Companies, Facade Cleaners, Airco Installers, Roofers, Electricians, Glaziers, Painters, Plasterers, Dakkoffer Rentals, White Goods Repair, and Enterprise Keyword Stuffing.
 - Ineligible Virtual Hubs: 100% of the listings claim physical offices, workshops, car showrooms, or legal chambers at unstaffed Regus flex offices (e.g. Zekeringstraat Amsterdam, Weena Rotterdam, World Forum The Hague, St Jacobsstraat Utrecht) with zero staff, equipment, vehicles, or inventory on site (Guideline 2447164).
-- Consecutive VoIP SIP Blocks: Sequential phone numbers (020 369, 010 360, 070 569, 030 369, 040 369) routing to a central lead broker.
+- Third-Party Garage Hijacking: 63 satellite drop-off points claiming independent third-party auto repair shops as official branches (Dakkoffer Online).
+- Consecutive VoIP SIP Blocks: Sequential phone numbers (020 369, 010 360, 070 569, 030 369, 040 369, 0686 360) routing to a central lead broker.
 - Criminal Title Misuse: Over 150 fake law firm listings claiming to be licensed attorneys ('advocaat') without Dutch Bar Association (NOvA) registration (criminal offense under Dutch Law Art. 435 lid 3 WvSr).
 
 Key Case IDs for Escalation:
 1. PC Refresh 49 unstaffed drop-offs: Case IDs 0-6209000041256, 6-7075000040838, 6-7234000041031
-2. Pro Deo Lawyer Syndicate (92 listings): Case IDs 2-3457000041128, 4-2380000041854, 4-2665000041448, 3-7223000041722
-3. Auto Dealership & Purchase (54 listings): Case IDs 6-7366000041346, 6-4846000042063, 0-9937000042070
-4. Facade Cleaning (34 listings): Case IDs 0-6957000042014, 7-8796000041661
-5. Air Conditioning (33 listings): Case IDs 0-2547000042238, 7-3050000041483
-6. Moving Companies (33 listings): Case IDs 6-2361000041333, 0-7254000041983
-7. Criminal Law (15 listings): Case ID 4-0573000040881
-8. Employment Law (24 listings): Case ID 5-4719000041187
-9. Personal Injury Law (25 listings): Case ID 9-8728000041558
+2. Dakkoffer Online 63 drop-offs: Case IDs 5-5565000041783, 7-7064000041462, 7-4222000041822
+3. Pro Deo Lawyer Syndicate (92 listings): Case IDs 2-3457000041128, 4-2380000041854, 4-2665000041448, 3-7223000041722
+4. Auto Dealership & Purchase (54 listings): Case IDs 6-7366000041346, 6-4846000042063, 0-9937000042070
+5. Premium Witgoed Reparatie (8 listings): Case ID 8-0531000042044
+6. Facade Cleaning (34 listings): Case IDs 0-6957000042014, 7-8796000041661
+7. Air Conditioning (33 listings): Case IDs 0-2547000042238, 7-3050000041483
+8. Moving Companies (33 listings): Case IDs 6-2361000041333, 0-7254000041983
+9. Criminal Law (15 listings): Case ID 4-0573000040881
+10. Employment Law (24 listings): Case ID 5-4719000041187
+11. Personal Injury Law (25 listings): Case ID 9-8728000041558
+12. SIXT Enterprise Keyword Stuffing: Case ID 0-4316000041158
 
 Could a Platinum/Diamond Product Expert please escalate this coordinated syndicate to Google's Trust & Safety Spam Engineering team for account-level manual action?
 
