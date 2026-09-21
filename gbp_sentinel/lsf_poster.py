@@ -28,14 +28,27 @@ def save_session():
         page = context.new_page()
         page.goto(LOGIN_URL)
 
-        # Wait up to 3 minutes for successful login
+        # Wait up to 5 minutes for successful login by verifying xf_user cookie
         try:
-            page.wait_for_selector("a[href*='/account/'], a.p-navgroup-link--user", timeout=180000)
-            context.storage_state(path=str(SESSION_PATH))
-            print("\n*** SUCCES: Sessie opgeslagen in data/lsf_session.json! ***")
-            print("Vanaf nu kan GBP Sentinel 100% autonoom en headless posten.")
+            print("Wachten tot je succesvol bent ingelogd in het browservenster...")
+            logged_in = False
+            for _ in range(150):
+                page.wait_for_timeout(2000)
+                cookies = context.cookies()
+                if any(c['name'] == 'xf_user' for c in cookies):
+                    logged_in = True
+                    break
+            
+            if logged_in:
+                # Give browser a moment to persist all cookies
+                page.wait_for_timeout(1500)
+                context.storage_state(path=str(SESSION_PATH))
+                print("\n*** SUCCES: Inloggen gedetecteerd! Sessie opgeslagen in data/lsf_session.json ***")
+                print("Vanaf nu kan GBP Sentinel 100% autonoom en headless posten.")
+            else:
+                print("\nGeen voltooide login gedetecteerd binnen 5 minuten.")
         except Exception as e:
-            print(f"\nTime-out of inloggen niet voltooid: {e}")
+            print(f"\nFout tijdens inlogsessie: {e}")
         finally:
             browser.close()
 
