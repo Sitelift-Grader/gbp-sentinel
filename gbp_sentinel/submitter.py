@@ -109,16 +109,20 @@ class RedressalSubmitter:
                 await page.wait_for_timeout(6000)
 
                 page_text = await page.evaluate("() => document.body.innerText")
-                case_match = re.search(r'([0-9]-[0-9]+)', page_text)
-                if case_match:
-                    result["case_id"] = case_match.group(1)
-                    result["success"] = True
-                    result["message"] = f"Submitted successfully! Google Case ID: {result['case_id']}"
-                elif any(kw.lower() in page_text.lower() for kw in ["thank you", "your email has been sent", "case id"]):
-                    result["success"] = True
-                    result["message"] = "Submitted successfully! Check email for Case ID confirmation."
+                if "We couldn't submit your form yet" in page_text or "Please enter a valid URL" in page_text:
+                    result["success"] = False
+                    result["message"] = "Form validation error on page."
                 else:
-                    result["message"] = "Submit button clicked, but confirmation text was not recognized."
+                    case_match = re.search(r'\b([0-9]-[0-9]{10,16})\b', page_text)
+                    if case_match:
+                        result["case_id"] = case_match.group(1)
+                        result["success"] = True
+                        result["message"] = f"Submitted successfully! Google Case ID: {result['case_id']}"
+                    elif any(kw.lower() in page_text.lower() for kw in ["thank you", "your email has been sent", "case id"]):
+                        result["success"] = True
+                        result["message"] = "Submitted successfully! Check email for Case ID confirmation."
+                    else:
+                        result["message"] = "Submit button clicked, but confirmation text was not recognized."
 
                 await page.screenshot(path=str(result_screenshot), full_page=True)
             else:
