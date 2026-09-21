@@ -1,8 +1,8 @@
 # Industrial-Scale Google Business Profile Spam Network in the Netherlands
 ### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation
 
-**Total Official Google Redressal Submissions:** 64
-**Total Documented Fraudulent Locations:** 951 listings
+**Total Official Google Redressal Submissions:** 72
+**Total Documented Fraudulent Locations:** 1060 listings
 
 ## 1. Executive Summary
 A sophisticated lead-generation syndicate is operating an industrial-scale Google Maps network across 35+ Dutch municipalities. 
@@ -36,6 +36,8 @@ The operator systematically clones web templates across 15+ trade and profession
 | National Auto Sales Syndicate Part 2 (0XX-369 Network) | https://autoverkopenzwolle.com | `0-9937000042070` | 15 |
 | National Automobile Purchase Syndicate (0XX-369 Network) | https://autoinkoopamsterdam.com | `6-7366000041346` | 23 |
 | National Criminal Law Syndicate (0XX-369 Network) | https://strafrechtadvocaatamsterdam.com | `4-0573000040881` | 15 |
+| National Dormer Construction Syndicate Part 1 (0XX-369 Network) | https://dakkapelamsterdam.com | `0-8488000041887` | 18 |
+| National Dormer Construction Syndicate Part 2 (0XX-369 Network) | https://dakkapeldordrecht.com | `6-4816000042092` | 6 |
 | National Electrician Syndicate (0XX-369 Network) | https://elektricienamsterdam.com | `2-1996000042149` | 15 |
 | National Employment Law Syndicate (0XX-369 Network) | https://arbeidsrechtadvocaatamsterdam.com | `5-4719000041187` | 24 |
 | National Facade Cleaning Syndicate Part 1 (0XX-369 Network) | https://gevelreinigingamsterdam.com | `0-6957000042014` | 17 |
@@ -59,9 +61,15 @@ The operator systematically clones web templates across 15+ trade and profession
 | National Pro Deo Lawyer Syndicate Part 2 (Major Cities) | https://prodeoadvocaatamsterdam.com | `4-2380000041854` | 13 |
 | National Pro Deo Lawyer Syndicate Part 3 (Regional Towns) | https://prodeoadvocaatalmelo.com | `4-2665000041448` | 30 |
 | National Pro Deo Lawyer Syndicate Part 4 (Smaller Municipalities) | https://prodeoadvocaatdeventer.com | `3-7223000041722` | 31 |
+| National Property Clearance Syndicate Part 1 (0XX-369 Network) | https://woningontruimingamsterdam.nl | `7-8907000041076` | 18 |
+| National Property Clearance Syndicate Part 2 (0XX-369 Network) | https://woningontruimingmaastricht.com | `3-2201000041903` | 8 |
 | National Roofing Syndicate (0XX-369 Network) | https://dakdekkeramsterdam.net | `7-1754000041660` | 15 |
 | National Roofing Syndicate Part 2 (0XX-369 Network) | https://dakdekkerzoetermeer.com | `0-1259000041782` | 10 |
+| National Seamless Flooring Syndicate Part 1 (0XX-369 Network) | https://gietvloeramsterdam.com | `4-6387000041956` | 18 |
+| National Seamless Flooring Syndicate Part 2 (0XX-369 Network) | https://gietvloerede.com | `1-4085000041541` | 9 |
 | National Sewer and Unblocking Syndicate (0XX-369 Network) | https://ontstoppingsbedrijfutrecht.net | `5-9473000041909` | 13 |
+| National Solar Energy Syndicate  (0XX-369 Network) | https://zonnepanelenamsterdam.net | `9-5809000041172` | 18 |
+| National Water Softener Syndicate  (0XX-369 Network) | https://waterontharderamsterdam.com | `8-9134000042221` | 14 |
 | National Window Frame Syndicate Part 1 (0XX-369 Network) | https://kozijnenamsterdam.net | `4-0685000042140` | 15 |
 | National Window Frame Syndicate Part 2 (0XX-369 Network) | https://kozijnendenbosch.com | `1-4280000041119` | 15 |
 | Netherlands Marketing Agencies (Title Keyword Stuffing) |  | `1-9530000041919` | 6 |
