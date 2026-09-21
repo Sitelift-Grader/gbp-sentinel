@@ -109,15 +109,15 @@ Key Case IDs for Escalation:
 2. Dakkoffer Online 63 drop-offs: Case IDs 5-5565000041783, 7-7064000041462, 7-4222000041822
 3. Topspace B.V. / Rent a Skibox (33 partner drop-offs): Case ID 4-8007000041269
 4. Pro Deo Lawyer Syndicate (92 listings): Case IDs 2-3457000041128, 4-2380000041854, 4-2665000041448, 3-7223000041722
-4. Auto Dealership & Purchase (54 listings): Case IDs 6-7366000041346, 6-4846000042063, 0-9937000042070
-5. Premium Witgoed Reparatie (8 listings): Case ID 8-0531000042044
-6. Facade Cleaning (34 listings): Case IDs 0-6957000042014, 7-8796000041661
-7. Air Conditioning (33 listings): Case IDs 0-2547000042238, 7-3050000041483
-8. Moving Companies (33 listings): Case IDs 6-2361000041333, 0-7254000041983
-9. Criminal Law (15 listings): Case ID 4-0573000040881
-10. Employment Law (24 listings): Case ID 5-4719000041187
-11. Personal Injury Law (25 listings): Case ID 9-8728000041558
-12. SIXT Enterprise Keyword Stuffing: Case ID 0-4316000041158
+5. Auto Dealership & Purchase (54 listings): Case IDs 6-7366000041346, 6-4846000042063, 0-9937000042070
+6. Premium Witgoed Reparatie (8 listings): Case ID 8-0531000042044
+7. Facade Cleaning (34 listings): Case IDs 0-6957000042014, 7-8796000041661
+8. Air Conditioning (33 listings): Case IDs 0-2547000042238, 7-3050000041483
+9. Moving Companies (33 listings): Case IDs 6-2361000041333, 0-7254000041983
+10. Criminal Law (15 listings): Case ID 4-0573000040881
+11. Employment Law (24 listings): Case ID 5-4719000041187
+12. Personal Injury Law (25 listings): Case ID 9-8728000041558
+13. SIXT Enterprise Keyword Stuffing: Case ID 0-4316000041158
 
 Could a Platinum/Diamond Product Expert please escalate this coordinated syndicate to Google's Trust & Safety Spam Engineering team for account-level manual action?
 
