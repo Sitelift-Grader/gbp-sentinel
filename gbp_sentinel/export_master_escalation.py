@@ -17,7 +17,9 @@ def export_master_dossier():
     """)
     rows = cur.fetchall()
     
-    print(f"Loaded {len(rows)} submitted targets.")
+    cur.execute("SELECT COUNT(*) FROM locations")
+    total_locs = cur.fetchone()[0]
+    print(f"Loaded {len(rows)} submitted targets across {total_locs} locations.")
     
     # Build Master Markdown report for Sterling Sky (English)
     report_en = []
@@ -25,7 +27,7 @@ def export_master_dossier():
     report_en.append("### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation")
     report_en.append("")
     report_en.append("**Total Official Google Redressal Submissions:** " + str(len(rows)))
-    report_en.append("**Total Documented Fraudulent Locations:** 838 listings")
+    report_en.append(f"**Total Documented Fraudulent Locations:** {total_locs} listings")
     report_en.append("")
     report_en.append("## 1. Executive Summary")
     report_en.append("A sophisticated lead-generation syndicate is operating an industrial-scale Google Maps network across 35+ Dutch municipalities. ")
