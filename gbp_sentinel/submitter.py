@@ -70,6 +70,12 @@ class RedressalSubmitter:
             # Fill Public URL
             if not public_url:
                 public_url = f"https://www.google.com/maps/search/?api=1&query={target_name}"
+            if "google.nl/maps" in public_url:
+                public_url = public_url.replace("google.nl/maps", "google.com/maps")
+            if "?" in public_url and "api=1" not in public_url:
+                public_url = public_url.split("?")[0]
+            if not public_url.startswith("https://www.google.com/maps"):
+                public_url = f"https://www.google.com/maps/search/?api=1&query={target_name}"
             await page.fill("#public_url", public_url)
 
             # Upload CSV Dossier
