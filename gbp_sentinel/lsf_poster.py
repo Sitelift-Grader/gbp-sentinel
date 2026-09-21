@@ -115,6 +115,16 @@ def post_thread(title: str, body: str, headless: bool = True) -> str:
 if __name__ == "__main__":
     if "--login" in sys.argv:
         save_session()
+    elif "--post" in sys.argv:
+        thread_file = Path("scratch/sterling_sky_forum_thread.txt")
+        if not thread_file.exists():
+            print("Fout: scratch/sterling_sky_forum_thread.txt niet gevonden.")
+            sys.exit(1)
+        body = thread_file.read_text(encoding="utf-8")
+        title = "Massive Coordinated Google Maps Spam Syndicate Across the Netherlands (918+ Listings, 64 Redressal Case IDs)"
+        url = post_thread(title=title, body=body, headless=True)
+        print(f"Gepubliceerd op Local Search Forum: {url}")
     else:
         print("Gebruik:")
         print("  python -m gbp_sentinel.lsf_poster --login       (Eenmalig inloggen & sessie opslaan)")
+        print("  python -m gbp_sentinel.lsf_poster --post        (Meesterdossier posten naar het forum)")
