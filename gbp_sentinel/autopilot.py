@@ -160,7 +160,7 @@ def audit_on_maps(niche_title: str, harvested: list[dict]) -> list[dict]:
     return audited
 
 
-async def submit_batch(target_name: str, locations: list[dict], explanation: str, hq: str = "Regus Amsterdam Sloterdijk") -> dict:
+def submit_batch(target_name: str, locations: list[dict], explanation: str, hq: str = "Regus Amsterdam Sloterdijk") -> dict:
     """Submit a batch to Google Redressal headlessly and save to database."""
     print(f"\n[3/4] Indienen van '{target_name}' ({len(locations)} locaties) bij Google Redressal...")
     assert len(explanation) < 950, f"Explanation too long: {len(explanation)} chars"
@@ -173,7 +173,7 @@ async def submit_batch(target_name: str, locations: list[dict], explanation: str
     print(f"  CSV dossier gegenereerd: {csv_path}")
 
     sub = submitter.RedressalSubmitter(headless=True)
-    res = await sub.submit(
+    res = sub.run_submit(
         target_name,
         csv_path,
         explanation,
