@@ -1,7 +1,7 @@
 # Industrial-Scale Google Business Profile Spam Network in the Netherlands
 ### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation
 
-**Total Official Google Redressal Submissions:** 60
+**Total Official Google Redressal Submissions:** 62
 **Total Documented Fraudulent Locations:** 838 listings
 
 ## 1. Executive Summary
@@ -64,6 +64,7 @@ The operator systematically clones web templates across 15+ trade and profession
 | National Sewer and Unblocking Syndicate (0XX-369 Network) | https://ontstoppingsbedrijfutrecht.net | `5-9473000041909` | 13 |
 | National Window Frame Syndicate Part 1 (0XX-369 Network) | https://kozijnenamsterdam.net | `4-0685000042140` | 15 |
 | National Window Frame Syndicate Part 2 (0XX-369 Network) | https://kozijnendenbosch.com | `1-4280000041119` | 15 |
+| Netherlands Marketing Agencies (Title Keyword Stuffing) |  | `1-9530000041919` | 6 |
 | PC Refresh | https://www.pcrefresh.com | `4-8919000041358` | 50 |
 | PC Refresh Inleverpunten Syndicate Part 1 (Drop-off Network) | https://www.pcrefresh.com | `0-6209000041256` | 16 |
 | PC Refresh Inleverpunten Syndicate Part 2 (Drop-off Network) | https://www.pcrefresh.com | `6-7075000040838` | 16 |
@@ -73,6 +74,7 @@ The operator systematically clones web templates across 15+ trade and profession
 | Riool Techniek Groep B.V. (Ontstoppingsdienst.nl) | https://ontstoppingsdienst.nl | `5-8460000041218` | 4 |
 | Roofix Dakdekkers | https://roofix-dakdekkers.nl | `2-4359000041458` | 7 |
 | Rotterdam Hofplein Contractor Syndicate | https://spacesworks.com/rotterdam/hofplein | `4-1161000041462` | 7 |
+| Sixt B.V. (Enterprise Keyword Stuffing) | https://www.sixt.nl | `0-4316000041158` | 3 |
 | Slotenmaker Amsterdam-Zuid Netwerk (Apollolaan 153) | https://slotenmaker-amsterdamzuid.nl | `4-8659000042085` | 3 |
 | Slotenmaker van Dijk | https://slotenmakervandijk.nl | `3-6870000041340` | 6 |
 | SmartDry Vochtbestrijding (Schrijver Vochtbestrijding B.V.) | https://www.smartdry.nl | `3-8415000041950` | 5 |
