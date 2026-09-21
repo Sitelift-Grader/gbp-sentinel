@@ -282,7 +282,7 @@ def main():
     parser.add_argument("--name", required=True, help="Display name (e.g. 'Locksmith', 'Chimney Sweep', 'Plumber')")
     args = parser.parse_args()
 
-    asyncio.run(run_autopilot_pipeline(args.niche, args.name))
+    run_autopilot_pipeline(args.niche, args.name)
 
 
 if __name__ == "__main__":
