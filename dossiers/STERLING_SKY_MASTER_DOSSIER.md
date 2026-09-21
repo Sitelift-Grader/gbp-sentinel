@@ -1,7 +1,7 @@
 # Industrial-Scale Google Business Profile Spam Network in the Netherlands
 ### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation
 
-**Total Official Google Redressal Submissions:** 62
+**Total Official Google Redressal Submissions:** 63
 **Total Documented Fraudulent Locations:** 838 listings
 
 ## 1. Executive Summary
@@ -69,6 +69,7 @@ The operator systematically clones web templates across 15+ trade and profession
 | PC Refresh Inleverpunten Syndicate Part 1 (Drop-off Network) | https://www.pcrefresh.com | `0-6209000041256` | 16 |
 | PC Refresh Inleverpunten Syndicate Part 2 (Drop-off Network) | https://www.pcrefresh.com | `6-7075000040838` | 16 |
 | PC Refresh Inleverpunten Syndicate Part 3 (Drop-off Network) | https://www.pcrefresh.com | `6-7234000041031` | 17 |
+| PremiumWitgoedReparatie Syndicate (National Virtual Witgoed Network) | https://witgoed-reparatie.net | `8-0531000042044` | 8 |
 | Psyned (Psychologen Nederland B.V.) | https://www.psyned.nl | `1-3470000040984` | 34 |
 | Rijles Zonder Stress Franchise B.V. | https://rijleszonderstress.nl | `9-4632000041448` | 20 |
 | Riool Techniek Groep B.V. (Ontstoppingsdienst.nl) | https://ontstoppingsdienst.nl | `5-8460000041218` | 4 |
