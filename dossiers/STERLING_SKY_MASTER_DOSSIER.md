@@ -2,7 +2,7 @@
 ### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation
 
 **Total Official Google Redressal Submissions:** 64
-**Total Documented Fraudulent Locations:** 838 listings
+**Total Documented Fraudulent Locations:** 951 listings
 
 ## 1. Executive Summary
 A sophisticated lead-generation syndicate is operating an industrial-scale Google Maps network across 35+ Dutch municipalities. 
