@@ -1,7 +1,7 @@
 # Industrial-Scale Google Business Profile Spam Network in the Netherlands
 ### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation
 
-**Total Official Google Redressal Submissions:** 57
+**Total Official Google Redressal Submissions:** 60
 **Total Documented Fraudulent Locations:** 838 listings
 
 ## 1. Executive Summary
@@ -22,6 +22,9 @@ The operator systematically clones web templates across 15+ trade and profession
 | CAREBRICK Nederland B.V. (Virtual Branch Network) | https://carebrick.nl | `4-3962000041694` | 9 |
 | Cross-Niche Syndicate (dakdekkeramsterdam.net) | https://dakdekkeramsterdam.net | `7-1343000042173` | 0 |
 | Dak Advies Groep B.V. | https://www.dakadviesgroep.nl | `2-9725000041046` | 21 |
+| Dakkoffer Online Inleverpunten Syndicate Part 1 (Drop-off Network) | https://dakkofferonline.nl | `5-5565000041783` | 21 |
+| Dakkoffer Online Inleverpunten Syndicate Part 2 (Drop-off Network) | https://dakkofferonline.nl | `7-7064000041462` | 21 |
+| Dakkoffer Online Inleverpunten Syndicate Part 3 (Drop-off Network) | https://dakkofferonline.nl | `7-4222000041822` | 21 |
 | Dakservice Vroegh B.V. | https://dakservicevroegh.nl | `9-0302000041010` | 2 |
 | Hoofddorp Contractor Syndicate (Saturnusstraat 46) | https://dakdekkerhoofddorp.com | `9-3878000041683` | 6 |
 | Leiden Contractor Syndicate (Bargelaan 200) | https://dakdekkerleiden.com | `6-9106000042100` | 14 |
