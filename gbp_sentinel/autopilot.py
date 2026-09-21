@@ -199,7 +199,7 @@ def submit_batch(target_name: str, locations: list[dict], explanation: str, hq: 
     return res
 
 
-async def run_autopilot_pipeline(niche: str, display_name: str):
+def run_autopilot_pipeline(niche: str, display_name: str):
     """Run the complete 4-step autonomous pipeline for a given niche."""
     print(f"================================================================")
     print(f"GBP SENTINEL AUTOPILOT: {display_name.upper()} ({niche})")
@@ -238,7 +238,7 @@ async def run_autopilot_pipeline(niche: str, display_name: str):
         if len(explanation) >= 950:
             explanation = explanation[:940] + "..."
 
-        res = await submit_batch(target_name, chunk, explanation)
+        res = submit_batch(target_name, chunk, explanation)
         case_id = res.get("case_id", "PENDING")
 
         # 4. Generate Forum Payload
