@@ -78,7 +78,7 @@ def post_thread(title: str, body: str, headless: bool = True) -> str:
             raise PermissionError("Sessie is verlopen. Voer opnieuw '--login' uit.")
 
         # Fill title
-        page.fill('input[name="title"]', title)
+        page.fill('textarea[name="title"], input[name="title"]', title)
         page.wait_for_timeout(500)
 
         # Toggle BBCode mode in Froala editor to allow raw text insertion
@@ -101,9 +101,9 @@ def post_thread(title: str, body: str, headless: bool = True) -> str:
         page.wait_for_timeout(1000)
 
         # Click submit
-        submit_btn = page.locator('button.button--primary:has-text("Post thread"), button:has-text("Post thread")')
+        submit_btn = page.locator('button:has-text("Create New Thread"), button.button--primary:has-text("Post thread"), button.button--icon--write')
         submit_btn.first.click()
-        page.wait_for_timeout(4000)
+        page.wait_for_timeout(6000)
 
         thread_url = page.url
         print(f"*** Thread succesvol geplaatst! Live URL: {thread_url} ***")
