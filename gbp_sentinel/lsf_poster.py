@@ -6,7 +6,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 SESSION_PATH = Path("data/lsf_session.json")
-POST_URL = "https://localsearchforum.com/forums/google-maps-spam-policy-violations/post-thread"
+POST_URL = "https://localsearchforum.com/forums/spam-on-google.109/post-thread"
 LOGIN_URL = "https://localsearchforum.com/login/"
 
 
