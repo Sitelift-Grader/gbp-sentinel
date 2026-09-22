@@ -405,7 +405,7 @@ def check_target(
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=headless)
-        page = browser.new_page()
+        page = browser.new_page(locale="nl-NL")
         try:
             for i, row in enumerate(rows, 1):
                 loc_id = row["id"]
@@ -447,7 +447,7 @@ def check_all_locations(
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=headless)
-        page = browser.new_page()
+        page = browser.new_page(locale="nl-NL")
         try:
             for i, row in enumerate(rows, 1):
                 loc_id = row["id"]
