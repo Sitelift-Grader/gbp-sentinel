@@ -76,13 +76,30 @@ python -m gbp_sentinel forum --target "Voorbeeld Bedrijf B.V." --case-id "2-9725
 
 ---
 
-## 4. Reeds geregistreerde en ingediende dossiers
+## 4. Het 3-traps escalatieprotocol (SOP)
 
-1. **PC Refresh**
-   - KvK: `54482844`
-   - Overtreding: 49 drop-off inleverpunten vermomd als computerreparatiewinkels
-   - Google Case ID: `4-8919000041358`
-2. **Dak Advies Groep B.V.**
-   - KvK: `93618166` (secundair `97524336`)
-   - Overtreding: 21 virtuele kantoren (Spaces, Regus) en onbemande satellietadressen
-   - Google Case ID: `2-9725000041046`
+Om te waarborgen dat elk dossier altijd in de juiste categorie en op de juiste Google- en forumlinks wordt geplaatst, hanteert het platform een vaste 3-traps routing:
+
+1. **Trap 1: Google Business Redressal Formulier**
+   - **URL**: `https://support.google.com/business/contact/business_redressal_form?hl=en`
+   - **Doel**: Het officiële CSV-bewijsdossier indienen en een uniek Google Case ID genereren.
+
+2. **Trap 2: Google Bedrijfsprofiel Helpforum (Google Community)**
+   - **URL**: `https://support.google.com/business/thread/new?hl=en`
+   - **Verplichte Categorie**: **`Policies and guidelines`** (Nederlands: *Beleid en richtlijnen*)
+   - **Actief Hoofdtopic**: `https://support.google.com/business/thread/469151040` (Thread ID: `469151040`)
+   - **Doel**: Het dossier vastleggen op Google's eigen platform. Alleen hier beschikken Google Product Experts (PEs) over de interne knop om een zaak door te zetten naar Google Trust en Safety Spam Engineering.
+
+3. **Trap 3: Local Search Forum (Sterling Sky)**
+   - **Sectie**: `Spam on Google` (`https://localsearchforum.com/forums/spam-on-google.109/`)
+   - **Master Topic**: `https://localsearchforum.com/threads/massive-coordinated-google-maps-spam-syndicate-across-the-netherlands-918-listings-64-redressal-case-ids.63398/`
+   - **Aan te spreken expert**: `@keyserholiday` (Jason Brown, Diamond Product Expert)
+   - **Doel**: De Product Expert direct voorzien van de link en het Thread ID van Google Help, zodat de interne escalatie direct wordt geactiveerd.
+
+---
+
+## 5. Actuele status database (`data/cases.db`)
+
+- **Totaal aantal officiële Google Redressal dossiers**: 73
+- **Totaal aantal gedocumenteerde locaties**: 1.060
+- **Master escalatiedossier**: `dossiers/STERLING_SKY_MASTER_DOSSIER.md`
