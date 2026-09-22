@@ -5,10 +5,12 @@ import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
-SESSION_PATH = Path("data/lsf_session.json")
-POST_URL = "https://localsearchforum.com/forums/spam-on-google.109/post-thread"
+from . import config
+
+SESSION_PATH = config.DATA_DIR / "lsf_session.json"
+POST_URL = config.LSF_POST_URL
 LOGIN_URL = "https://localsearchforum.com/login/"
-DEFAULT_THREAD_URL = "https://localsearchforum.com/threads/massive-coordinated-google-maps-spam-syndicate-across-the-netherlands-918-listings-64-redressal-case-ids.63398/"
+DEFAULT_THREAD_URL = config.LSF_THREAD_URL
 
 
 def save_session():
