@@ -241,37 +241,29 @@ def run_autopilot_pipeline(niche: str, display_name: str):
         res = submit_batch(target_name, chunk, explanation)
         case_id = res.get("case_id", "PENDING")
 
-        # 4. Generate Forum Payload
-        print(f"\n[4/4] Escalatie payload genereren voor {target_name}...")
-        links = []
-        for i, item in enumerate(chunk, 1):
-            share = item.get("share_url") or item.get("url")
-            links.append(f"{i}. {item['name']}: {share}")
-            
-        forum_body = f"""Dear Product Experts,
-
-I am writing to respectfully request escalation for a formal Business Redressal Complaint submitted under Google Case ID: {case_id}.
-
-The complaint concerns "{target_name}".
-
-A complete audited CSV dossier containing all {len(chunk)} specific Google Maps URLs, address occupant verifications, and evidence details was attached to Case ID {case_id}.
-
-Direct verified Google Maps listings:
-{chr(10).join(links)}
-
-Summary of policy breaches documented in the dossier:
-1. Virtual Offices & Flex Hubs: Fake physical storefronts claiming commercial facilities at unstaffed flex centers with zero staff or equipment on site.
-2. Ineligible Lead Generation Brokerage: The operator acts as an unlicensed lead broker collecting enquiries without local facilities.
-3. Consecutive VoIP Blocks: Systematic abuse of consecutive VoIP SIP blocks routing to a centralized call center.
-
-Could a Product Expert please review this complaint and verify if Case ID {case_id} has been escalated to the specialist review team?
-
-Thank you for your time and assistance."""
-
+        # 4. Generate Standardized Community & Forum Payloads
+        print(f"\n[4/4] Escalatie payloads genereren voor {target_name}...")
         safe_slug = "".join(c if c.isalnum() else "_" for c in target_name).lower()
-        payload_file = Path(f"scratch/{safe_slug}_forum_payload.txt")
-        payload_file.write_text(forum_body, encoding="utf-8")
-        print(f"  Escalatiebestand gereed: {payload_file}")
+
+        # Google Community Payload (Policies and guidelines category)
+        comm_payload = forum.build_community_payload(target_name, case_id, [c['name'] for c in chunk])
+        google_file = Path(f"scratch/{safe_slug}_google_community.txt")
+        google_content = (
+            f"TARGET FORUM: Google Business Profile Help Community\n"
+            f"URL: {comm_payload['forum_url']}\n"
+            f"MANDATORY CATEGORY: {comm_payload['category_en']} / {comm_payload['category_nl']}\n"
+            f"TITLE: {comm_payload['title']}\n"
+            f"{'='*70}\n\n"
+            f"{comm_payload['body']}\n"
+        )
+        google_file.write_text(google_content, encoding="utf-8")
+
+        # LSF Cross-Reply Payload (tagging @keyserholiday on master thread)
+        lsf_file = Path(f"scratch/{safe_slug}_lsf_cross_reply.txt")
+        lsf_content = forum.build_lsf_cross_reply(case_ids=[case_id])
+        lsf_file.write_text(lsf_content, encoding="utf-8")
+        print(f"  Google Community payload gereed: {google_file}")
+        print(f"  Local Search Forum payload gereed: {lsf_file}")
 
     print(f"\nAutopilot run voor '{display_name}' succesvol afgerond!")
 
