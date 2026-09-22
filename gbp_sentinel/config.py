@@ -50,3 +50,15 @@ SUBMITTER_ORG = CONFIG.get("submitter_organization", DEFAULT_CONFIG["submitter_o
 AUTHUSER = str(CONFIG.get("authuser", DEFAULT_CONFIG["authuser"]))
 HEADLESS = bool(CONFIG.get("headless", DEFAULT_CONFIG["headless"]))
 USER_AGENT = CONFIG.get("user_agent", DEFAULT_CONFIG["user_agent"])
+
+# Canonical Escalation Routing
+ROUTING = CONFIG.get("routing", {})
+REDRESSAL_FORM_URL = ROUTING.get("redressal_form_url", "https://support.google.com/business/contact/business_redressal_form?hl=en")
+GOOGLE_COMMUNITY_URL = ROUTING.get("google_help_community_url", "https://support.google.com/business/thread/new?hl=en")
+GOOGLE_COMMUNITY_CATEGORY_EN = ROUTING.get("google_help_category_en", "Policies and guidelines")
+GOOGLE_COMMUNITY_CATEGORY_NL = ROUTING.get("google_help_category_nl", "Beleid en richtlijnen")
+GOOGLE_COMMUNITY_THREAD_ID = ROUTING.get("google_help_active_thread_id", "469151040")
+GOOGLE_COMMUNITY_THREAD_URL = ROUTING.get("google_help_active_thread_url", "https://support.google.com/business/thread/469151040/industrial-google-maps-spam-network-in-netherlands-1-060-fake-listings-73-case-ids")
+LSF_POST_URL = ROUTING.get("lsf_post_thread_url", "https://localsearchforum.com/forums/spam-on-google.109/post-thread")
+LSF_THREAD_URL = ROUTING.get("lsf_active_thread_url", "https://localsearchforum.com/threads/massive-coordinated-google-maps-spam-syndicate-across-the-netherlands-918-listings-64-redressal-case-ids.63398/")
+LSF_TARGET_EXPERT = ROUTING.get("lsf_target_expert", "@keyserholiday")
