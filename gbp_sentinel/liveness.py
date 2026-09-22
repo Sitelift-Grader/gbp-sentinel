@@ -159,9 +159,6 @@ def _get_address(page: Page) -> Optional[str]:
     return None
 
 
-def inspect_place(
-    page: Page,
-    url: str,
 def check_replacement(page: Page, expected_name: str, address: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Search Google Maps to check if a replacement profile was spawned for this business."""
     if not expected_name:
