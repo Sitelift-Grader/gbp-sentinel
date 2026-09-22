@@ -7,7 +7,7 @@ from pathlib import Path
 from playwright.async_api import async_playwright
 from . import config
 
-FORM_URL = "https://support.google.com/business/contact/business_redressal_form?hl=en"
+FORM_URL = config.REDRESSAL_FORM_URL
 
 class RedressalSubmitter:
     def __init__(self, headless: bool = None):
