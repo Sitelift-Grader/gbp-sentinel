@@ -361,6 +361,7 @@ def check_location(
     data = json.loads(row["data"]) if isinstance(row["data"], str) else (row["data"] or {})
     url = data.get("url") or row.get("url")
     expected_name = data.get("name") or row.get("name")
+    expected_address = data.get("address") or row.get("address")
 
     if not url:
         res = {"status": "ERROR", "details": {"reason": "No URL found in location record"}}
@@ -368,13 +369,13 @@ def check_location(
         return res
 
     if page is not None:
-        inspection = inspect_place(page, url, expected_name)
+        inspection = inspect_place(page, url, expected_name, expected_address)
     else:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
-            new_page = browser.new_page()
+            new_page = browser.new_page(locale="nl-NL")
             try:
-                inspection = inspect_place(new_page, url, expected_name)
+                inspection = inspect_place(new_page, url, expected_name, expected_address)
             finally:
                 browser.close()
 
