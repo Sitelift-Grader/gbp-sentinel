@@ -4,7 +4,7 @@ import argparse
 import sys
 import json
 from pathlib import Path
-from . import campaign, config, db, auditor, dossier, scraper, submitter, forum
+from . import campaign, config, db, auditor, dossier, forum, investigator, scraper, submitter
 
 def cmd_init():
     """Initialize database and directories."""
@@ -211,6 +211,37 @@ def cmd_campaign(args):
     print(f"Reviewklare locaties: {manifest['total_review_ready_locations']} | batches: {len(manifest['batches'])}")
     print("Er is niets extern verstuurd. Controleer elke batch voordat je deze via de aangegeven route indient.")
 
+def cmd_investigate(args):
+    """Build a network evidence report from stored public listing data."""
+    db.init_db()
+    try:
+        report_path, report = investigator.build_network_report(args.target, args.min_shared)
+    except (FileExistsError, ValueError) as exc:
+        print(f"Fout: {exc}")
+        sys.exit(1)
+    print(f"Netwerkrapport gemaakt: {report_path}")
+    print(f"Bronprofielen: {report['source_profiles']} | mogelijke clusters: {len(report['clusters'])}")
+    print("Clusters zijn onderzoekssignalen; beoordeel elk profiel voordat je een externe melding maakt.")
+
+def cmd_follow_up(args):
+    """Prepare a manual queue for checking outstanding Google cases."""
+    db.init_db()
+    try:
+        queue_path, cases = investigator.build_follow_up_queue(args.days)
+    except ValueError as exc:
+        print(f"Fout: {exc}")
+        sys.exit(1)
+    print(f"Opvolgwachtrij gemaakt: {queue_path} ({len(cases)} cases)")
+
+def cmd_confirm_case(args):
+    """Record that the Google confirmation email was manually verified."""
+    db.init_db()
+    if not any(item.get("case_id") == args.case_id for item in db.list_submissions()):
+        print(f"Fout: Case ID '{args.case_id}' niet gevonden.")
+        sys.exit(1)
+    db.save_case_event(args.case_id, "email_confirmation_verified", args.note or "")
+    print(f"E-mailbevestiging geregistreerd voor case {args.case_id}.")
+
 def main():
     parser = argparse.ArgumentParser(description="GBP Sentinel: Anti-Spam & Redressal Automatisering")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -258,6 +289,17 @@ def main():
     p_campaign.add_argument("--target", help="Beperk de campagne tot één target")
     p_campaign.add_argument("--batch-size", type=int, default=20, help="Aantal locaties per batch (standaard: 20)")
 
+    p_investigate = subparsers.add_parser("investigate", help="Vind herhaalde openbare netwerk-signalen tussen opgeslagen profielen")
+    p_investigate.add_argument("--target", help="Beperk het onderzoek tot één target")
+    p_investigate.add_argument("--min-shared", type=int, default=2, help="Minimaal gedeeld signaal per cluster (standaard: 2)")
+
+    p_follow_up = subparsers.add_parser("follow-up", help="Maak een handmatige opvolgwachtrij voor bestaande Google Cases")
+    p_follow_up.add_argument("--days", type=int, default=7, help="Minimale leeftijd van een case in dagen (standaard: 7)")
+
+    p_confirm_case = subparsers.add_parser("confirm-case", help="Leg handmatige verificatie van de Google-bevestigingsmail vast")
+    p_confirm_case.add_argument("--case-id", required=True, help="Google Case ID")
+    p_confirm_case.add_argument("--note", help="Optionele notitie, bijvoorbeeld datum of onderwerpregel")
+
     args = parser.parse_args()
 
     if args.command == "init":
@@ -278,6 +320,12 @@ def main():
         cmd_update_case(args)
     elif args.command == "campaign":
         cmd_campaign(args)
+    elif args.command == "investigate":
+        cmd_investigate(args)
+    elif args.command == "follow-up":
+        cmd_follow_up(args)
+    elif args.command == "confirm-case":
+        cmd_confirm_case(args)
 
 if __name__ == "__main__":
     main()

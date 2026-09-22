@@ -48,6 +48,15 @@ def init_db():
                     FOREIGN KEY (target_name) REFERENCES targets(name) ON DELETE CASCADE
                 )
             """)
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS case_events (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    case_id TEXT NOT NULL,
+                    event_type TEXT NOT NULL,
+                    details TEXT,
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
     finally:
         conn.close()
 
@@ -163,5 +172,17 @@ def submission_status_summary():
             "FROM submissions GROUP BY status ORDER BY status"
         ).fetchall()
         return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
+def save_case_event(case_id, event_type, details=""):
+    """Record a verified email, response, or manual review event for a case."""
+    conn = _get_connection()
+    try:
+        with conn:
+            conn.execute(
+                "INSERT INTO case_events (case_id, event_type, details, created_at) VALUES (?, ?, ?, ?)",
+                (case_id, event_type, details, datetime.now().isoformat()),
+            )
     finally:
         conn.close()

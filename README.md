@@ -89,6 +89,14 @@ python -m gbp_sentinel campaign --batch-size 20
 ```
 Hiermee maakt GBP Sentinel per overtredingstype bewijsgebonden CSV-batches, een `manifest.json` en een verzendwachtrij in `dossiers/campaigns/`. Alleen locaties met status `ready_for_review` en meerdere sterke bewijssignalen worden meegenomen. De opdracht verstuurt zelf niets extern.
 
+### Syndicate-onderzoek en case-opvolging
+```powershell
+python -m gbp_sentinel investigate --min-shared 2
+python -m gbp_sentinel follow-up --days 7
+python -m gbp_sentinel confirm-case --case-id "3-4921000041570" --note "Bevestigingsmail handmatig gecontroleerd"
+```
+`investigate` maakt een netwerkrapport op basis van herhaalde openbare telefoons, websites en adressen. Dit zijn onderzoekssignalen, geen automatische fraudeconclusies. `follow-up` maakt een controlelijst voor oudere Case IDs; `confirm-case` legt de vereiste Google-e-mailbevestiging vast.
+
 ---
 
 ## 4. Het 3-traps escalatieprotocol (SOP)
