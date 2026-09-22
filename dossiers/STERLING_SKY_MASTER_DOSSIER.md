@@ -1,8 +1,8 @@
 # Industrial-Scale Google Business Profile Spam Network in the Netherlands
 ### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation
 
-**Total Official Google Redressal Submissions:** 77
-**Total Documented Fraudulent Locations:** 1138 listings
+**Total Official Google Redressal Submissions:** 78
+**Total Documented Fraudulent Locations:** 1161 listings
 
 ## 1. Executive Summary
 A sophisticated lead-generation syndicate is operating an industrial-scale Google Maps network across 35+ Dutch municipalities. 
@@ -57,6 +57,7 @@ The operator systematically clones web templates across 15+ trade and profession
 | National Painting Syndicate (0XX-369 Network) | https://schilderamsterdam.net | `4-0102000041331` | 13 |
 | National Painting Syndicate Part 2 (0XX-369 Network) | https://schildergroningen.net | `4-6308000041287` | 11 |
 | National Personal Injury Syndicate (0XX-369 Network) | https://letselschadeadvocaatamsterdam.com | `9-8728000041558` | 25 |
+| National Personal Injury Syndicate Part 2 (0XX-369 Network) | https://letselschadeadvocaatalkmaar.com/ | `3-4921000041570` | 23 |
 | National Pest Control Syndicate (0XX-369 Network) | https://ongediertebestrijdingamsterdam.net | `4-9380000041392` | 17 |
 | National Plasterer Syndicate Part 1 (0XX-369 Network) | https://stukadooramsterdam.com | `3-9461000041160` | 13 |
 | National Plasterer Syndicate Part 2 (0XX-369 Network) | https://stukadooramersfoort.com | `3-5874000041028` | 13 |
