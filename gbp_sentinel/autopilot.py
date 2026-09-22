@@ -199,8 +199,8 @@ def submit_batch(target_name: str, locations: list[dict], explanation: str, hq: 
     return res
 
 
-def run_autopilot_pipeline(niche: str, display_name: str):
-    """Run the complete 4-step autonomous pipeline for a given niche."""
+def run_autopilot_pipeline(niche: str, display_name: str, submit: bool = False, confirm: bool = False):
+    """Run discovery and evidence collection; submissions require explicit confirmation."""
     print(f"================================================================")
     print(f"GBP SENTINEL AUTOPILOT: {display_name.upper()} ({niche})")
     print(f"================================================================")
@@ -217,7 +217,8 @@ def run_autopilot_pipeline(niche: str, display_name: str):
         print("Geen locaties kunnen auditeren.")
         return
 
-    # 3. Batch & Submit
+    # 3. Batch and prepare evidence. Submission is deliberately opt-in so
+    # discovery signals cannot turn into external reports without review.
     batch_size = 18
     num_batches = (len(audited) + batch_size - 1) // batch_size
     
@@ -238,8 +239,16 @@ def run_autopilot_pipeline(niche: str, display_name: str):
         if len(explanation) >= 950:
             explanation = explanation[:940] + "..."
 
-        res = submit_batch(target_name, chunk, explanation)
-        case_id = res.get("case_id", "PENDING")
+        if submit and confirm:
+            res = submit_batch(target_name, chunk, explanation)
+            case_id = res.get("case_id", "PENDING")
+        else:
+            case_id = "NOT_SUBMITTED"
+            print("  Niet ingediend: controleer bewijs en gebruik --submit --confirm voor een echte indiening.")
+
+        if case_id == "NOT_SUBMITTED":
+            print("  Community- en forum-escalatie overgeslagen: er is nog geen geverifieerde Google Case ID.")
+            continue
 
         # 4. Generate Standardized Community & Forum Payloads
         print(f"\n[4/4] Escalatie payloads genereren voor {target_name}...")
@@ -247,7 +256,7 @@ def run_autopilot_pipeline(niche: str, display_name: str):
 
         # Google Community Payload (Policies and guidelines category)
         comm_payload = forum.build_community_payload(target_name, case_id, [c['name'] for c in chunk])
-        google_file = Path(f"scratch/{safe_slug}_google_community.txt")
+        google_file = config.SCRATCH_DIR / f"{safe_slug}_google_community.txt"
         google_content = (
             f"TARGET FORUM: Google Business Profile Help Community\n"
             f"URL: {comm_payload['forum_url']}\n"
@@ -259,7 +268,7 @@ def run_autopilot_pipeline(niche: str, display_name: str):
         google_file.write_text(google_content, encoding="utf-8")
 
         # LSF Cross-Reply Payload (tagging @keyserholiday on master thread)
-        lsf_file = Path(f"scratch/{safe_slug}_lsf_cross_reply.txt")
+        lsf_file = config.SCRATCH_DIR / f"{safe_slug}_lsf_cross_reply.txt"
         lsf_content = forum.build_lsf_cross_reply(case_ids=[case_id])
         lsf_file.write_text(lsf_content, encoding="utf-8")
         print(f"  Google Community payload gereed: {google_file}")
@@ -272,9 +281,13 @@ def main():
     parser = argparse.ArgumentParser(description="GBP Sentinel Autonomous Pipeline")
     parser.add_argument("--niche", required=True, help="Niche keyword (e.g. autodealer, loodgieter, schoorsteenveger)")
     parser.add_argument("--name", required=True, help="Display name (e.g. 'Locksmith', 'Chimney Sweep', 'Plumber')")
+    parser.add_argument("--submit", action="store_true", help="Dien de voorbereide batches in na controle")
+    parser.add_argument("--confirm", action="store_true", help="Bevestig dat externe indiening is toegestaan")
     args = parser.parse_args()
 
-    run_autopilot_pipeline(args.niche, args.name)
+    if args.submit and not args.confirm:
+        parser.error("--submit vereist ook --confirm")
+    run_autopilot_pipeline(args.niche, args.name, submit=args.submit, confirm=args.confirm)
 
 
 if __name__ == "__main__":

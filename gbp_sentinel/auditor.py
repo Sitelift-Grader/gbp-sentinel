@@ -36,7 +36,7 @@ class GbpAuditor:
         snippet = loc.get("snippet", "")
         full_text = f"{name} {address} {snippet}".lower()
 
-        is_fraud = False
+        evidence = []
         violation_category = "clean"
         actual_occupant = loc.get("actual_occupant", "Unverified Business Location")
         kvk_status = loc.get("kvk_status", "")
@@ -47,6 +47,9 @@ class GbpAuditor:
             return {
                 **loc,
                 "is_fraud": False,
+                "is_reportable": False,
+                "review_status": "clean",
+                "evidence_signals": [],
                 "violation_category": "headquarters",
                 "actual_occupant": f"Official Registered Headquarters ({target_hq})",
                 "kvk_status": f"Legally Registered (KvK: {target_kvk})",
@@ -58,7 +61,7 @@ class GbpAuditor:
         matched_vo_addr = next((va for va in self.virtual_addresses if va in address.lower()), None)
 
         if matched_vo_kw or matched_vo_addr:
-            is_fraud = True
+            evidence.append("known_virtual_office")
             violation_category = "virtual_office"
             matched_name = (matched_vo_kw or matched_vo_addr).title()
             actual_occupant = f"{matched_name} (Coworking Space & Virtual Office Provider)"
@@ -71,7 +74,7 @@ class GbpAuditor:
         # 2. Check Parcel / Drop-off Partner
         matched_parcel = next((c for c in self.parcel_chains if c in full_text), None)
         if matched_parcel:
-            is_fraud = True
+            evidence.append("parcel_or_partner_location")
             violation_category = "parcel_dropoff"
             actual_occupant = f"{matched_parcel.title()} (Third-Party Retail & Parcel Shop)"
             violation_details = (
@@ -81,7 +84,7 @@ class GbpAuditor:
 
         # 3. Check Residential Address
         if any(term in full_text for term in ["woonadres", "residential", "appartement", "woning"]):
-            is_fraud = True
+            evidence.append("residential_address_indicator")
             violation_category = "residential"
             actual_occupant = "Private Residential Home"
             violation_details = (
@@ -91,13 +94,25 @@ class GbpAuditor:
 
         # 4. Check Keyword Stuffing in Title
         has_delimiter = any(d in name for d in ["|", " - ", " – ", " — ", ":"])
-        if has_delimiter and not is_fraud:
-            is_fraud = True
+        if has_delimiter and not evidence:
+            evidence.append("possible_keyword_stuffing")
             violation_category = "keyword_stuffing"
             actual_occupant = "Trade Contractor (Location Unverified)"
             violation_details = (
                 "Keyword stuffed business title violating Google representation guidelines. "
                 "Target geographic terms and trade keywords artificially injected into profile name."
+            )
+
+        # A single weak signal is useful for triage, but is not sufficient to
+        # describe a listing as fraudulent or to include it in a complaint.
+        strong_signals = {"known_virtual_office", "parcel_or_partner_location"}
+        is_reportable = bool(strong_signals.intersection(evidence))
+        is_fraud = is_reportable
+        if not is_reportable and evidence:
+            violation_category = "needs_review"
+            violation_details = (
+                "Potential policy concern found; verify the physical business presence "
+                "and the profile name before reporting."
             )
 
         # Set KvK status
@@ -113,6 +128,9 @@ class GbpAuditor:
         return {
             **loc,
             "is_fraud": is_fraud,
+            "is_reportable": is_reportable,
+            "review_status": "ready_for_review" if is_reportable else ("needs_evidence" if evidence else "clean"),
+            "evidence_signals": evidence,
             "violation_category": violation_category,
             "actual_occupant": actual_occupant,
             "kvk_status": kvk_status,

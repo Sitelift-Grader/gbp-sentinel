@@ -65,14 +65,29 @@ python -m gbp_sentinel dossier --target "Voorbeeld Bedrijf B.V."
 
 ### Stap 4: Klacht automatisch indienen bij Google
 ```powershell
-python -m gbp_sentinel submit --target "Voorbeeld Bedrijf B.V."
+python -m gbp_sentinel submit --target "Voorbeeld Bedrijf B.V." --confirm
 ```
-*Na indiening verschijnt het officiële Google Case ID in de terminal en staat de forumbeschrijving automatisch op je Windows-klembord.*
+Zonder `--confirm` wordt niets ingediend. Een Case ID betekent alleen dat Google de klacht heeft ontvangen, niet dat de profielen zijn aangepast of verwijderd.
 
-### Stap 5: Forumbericht genereren voor bestaande case
+### Stap 5: Uitkomst opvolgen
+```powershell
+python -m gbp_sentinel update-case --case-id "2-9725000041046" --status actioned
+python -m gbp_sentinel list
+```
+Gebruik `awaiting_google_review`, `follow_up_sent`, `actioned`, `no_action` of `closed` uitsluitend na handmatige controle van de Google-uitkomst.
+
+De `autopilot` en dagelijkse watchdog verzamelen standaard alleen signalen. Alleen `python -m gbp_sentinel.autopilot --niche "..." --name "..." --submit --confirm` mag een gecontroleerde batch extern indienen.
+
+### Stap 6: Forumbericht genereren voor bestaande case
 ```powershell
 python -m gbp_sentinel forum --target "Voorbeeld Bedrijf B.V." --case-id "2-9725000041046"
 ```
+
+### Campagnemodus voor syndicates
+```powershell
+python -m gbp_sentinel campaign --batch-size 20
+```
+Hiermee maakt GBP Sentinel per overtredingstype bewijsgebonden CSV-batches, een `manifest.json` en een verzendwachtrij in `dossiers/campaigns/`. Alleen locaties met status `ready_for_review` en meerdere sterke bewijssignalen worden meegenomen. De opdracht verstuurt zelf niets extern.
 
 ---
 

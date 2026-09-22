@@ -25,6 +25,7 @@ def test_csv_export_format(tmp_path=None):
             "actual_occupant": "Spaces Virtual Office",
             "kvk_status": "Not registered",
             "policy_violation_details": "Ineligible virtual office"
+            ,"is_reportable": True
         }
     ]
     csv_file = export_dossier_csv("Test Corp", dummy_locations, filename="test_dossier.csv")

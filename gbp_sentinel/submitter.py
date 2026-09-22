@@ -119,8 +119,10 @@ class RedressalSubmitter:
                         result["success"] = True
                         result["message"] = f"Submitted successfully! Google Case ID: {result['case_id']}"
                     elif any(kw.lower() in page_text.lower() for kw in ["thank you", "your email has been sent", "case id"]):
-                        result["success"] = True
-                        result["message"] = "Submitted successfully! Check email for Case ID confirmation."
+                        result["message"] = (
+                            "Confirmation page detected, but no Case ID was captured. "
+                            "Do not treat this as a completed submission; verify the confirmation email first."
+                        )
                     else:
                         result["message"] = "Submit button clicked, but confirmation text was not recognized."
 

@@ -13,6 +13,7 @@ def test_virtual_office_detection():
     }
     res = auditor.audit_location(loc, target_hq="Naarderweg 16, Hilversum", target_kvk="93618166")
     assert res["is_fraud"] is True
+    assert res["is_reportable"] is True
     assert res["violation_category"] == "virtual_office"
     assert "Spaces" in res["actual_occupant"] or "Hofplein 20" in res["actual_occupant"]
     assert "93618166" in res["kvk_status"]
@@ -26,6 +27,7 @@ def test_parcel_dropoff_detection():
     }
     res = auditor.audit_location(loc, target_hq="Stephensonstraat 48, Den Haag", target_kvk="54482844")
     assert res["is_fraud"] is True
+    assert res["is_reportable"] is True
     assert res["violation_category"] == "parcel_dropoff"
     assert "Primera" in res["actual_occupant"]
 
@@ -39,6 +41,13 @@ def test_headquarters_is_clean():
     res = auditor.audit_location(loc, target_hq="Stephensonstraat 48, 2561 XW Den Haag", target_kvk="54482844")
     assert res["is_fraud"] is False
     assert res["violation_category"] == "headquarters"
+
+def test_keyword_stuffing_needs_human_review():
+    auditor = GbpAuditor()
+    loc = {"name": "Dakdekker Rotterdam | 24/7 Spoed", "address": "Onbekend", "snippet": ""}
+    res = auditor.audit_location(loc)
+    assert res["is_fraud"] is False
+    assert res["review_status"] == "needs_evidence"
 
 if __name__ == "__main__":
     test_virtual_office_detection()

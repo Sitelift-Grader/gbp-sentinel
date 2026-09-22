@@ -47,7 +47,7 @@ async def run_daily_sweep(target_niche: str = None, auto_post_forum: bool = Fals
 
     print("\n==================================================================")
     print("DAGELIJKSE SWEEP VOLTOOID")
-    print("Alle nieuwe overtredingen zijn gedocumenteerd en ingediend.")
+    print("Mogelijke overtredingen zijn verzameld; controleer dossiers en Google Case ID's voor vervolgactie.")
     print("==================================================================")
 
 

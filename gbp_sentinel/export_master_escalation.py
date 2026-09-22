@@ -1,9 +1,10 @@
 import sqlite3
 import json
 from pathlib import Path
+from . import config
 
 def export_master_dossier():
-    con = sqlite3.connect('data/cases.db')
+    con = sqlite3.connect(config.DB_PATH)
     cur = con.cursor()
     
     # Get all targets, submissions and locations
@@ -83,7 +84,7 @@ def export_master_dossier():
     report_en.append("Thank you for your time and assistance in protecting consumers from deceptive lead brokerage.")
 
     content = "\n".join(report_en)
-    out_path = Path("dossiers/STERLING_SKY_MASTER_DOSSIER.md")
+    out_path = config.DOSSIERS_DIR / "STERLING_SKY_MASTER_DOSSIER.md"
     out_path.write_text(content, encoding="utf-8")
     print(f"Master escalation dossier saved to {out_path} ({len(content)} bytes)")
     
@@ -132,7 +133,7 @@ Could a Platinum/Diamond Product Expert please escalate this coordinated syndica
 
 Thank you for your assistance!"""
     
-    forum_path = Path("scratch/sterling_sky_forum_thread.txt")
+    forum_path = config.SCRATCH_DIR / "sterling_sky_forum_thread.txt"
     forum_path.write_text(forum_post, encoding="utf-8")
     print(f"Forum thread post saved to {forum_path}")
 

@@ -140,3 +140,28 @@ def list_submissions():
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
+def update_submission_status(case_id, status):
+    """Record a manually verified outcome for an existing Google case."""
+    conn = _get_connection()
+    try:
+        with conn:
+            cursor = conn.execute(
+                "UPDATE submissions SET status = ? WHERE case_id = ?",
+                (status, case_id),
+            )
+        return cursor.rowcount
+    finally:
+        conn.close()
+
+def submission_status_summary():
+    """Return case counts grouped by their current lifecycle status."""
+    conn = _get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT COALESCE(status, 'unknown') AS status, COUNT(*) AS total "
+            "FROM submissions GROUP BY status ORDER BY status"
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()

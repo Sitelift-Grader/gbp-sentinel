@@ -13,16 +13,23 @@ REDRESSAL_COLUMNS = [
     "policy_violation_details"
 ]
 
-def export_dossier_csv(target_name: str, audited_locations: list, filename: str = None) -> Path:
-    """Export audited locations to a Google-compliant CSV file."""
+def export_dossier_csv(target_name: str, audited_locations: list, filename: str = None, output_dir: Path = None) -> Path:
+    """Export only review-ready, policy-supported locations to a CSV dossier."""
     safe_name = "".join(c if c.isalnum() or c in ("-", "_") else "_" for c in target_name).lower()
     if not filename:
         filename = f"{safe_name}_gbp_redressal_dossier.csv"
     
-    filepath = config.DOSSIERS_DIR / filename
+    filepath = (Path(output_dir) if output_dir else config.DOSSIERS_DIR) / filename
     
+    reportable_locations = [
+        loc for loc in audited_locations
+        if loc.get("is_reportable", loc.get("is_fraud", False))
+    ]
+    if not reportable_locations:
+        raise ValueError("Geen locaties met voldoende bewijs voor een dossier; controleer eerst de reviewlijst.")
+
     rows = []
-    for loc in audited_locations:
+    for loc in reportable_locations:
         rows.append({
             "business_name_on_profile": loc.get("name", target_name),
             "google_maps_url": loc.get("url", f"https://www.google.com/maps/search/?api=1&query={loc.get('address', '')}"),

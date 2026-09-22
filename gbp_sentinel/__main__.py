@@ -4,7 +4,7 @@ import argparse
 import sys
 import json
 from pathlib import Path
-from . import config, db, auditor, dossier, scraper, submitter, forum
+from . import campaign, config, db, auditor, dossier, scraper, submitter, forum
 
 def cmd_init():
     """Initialize database and directories."""
@@ -67,15 +67,20 @@ def cmd_dossier(args):
         print(f"Fout: Geen locaties beschikbaar voor '{args.target}'.")
         sys.exit(1)
 
-    csv_path = dossier.export_dossier_csv(args.target, locations)
+    reportable = [loc for loc in locations if loc.get("is_reportable", loc.get("is_fraud", False))]
+    try:
+        csv_path = dossier.export_dossier_csv(args.target, reportable)
+    except ValueError as exc:
+        print(f"Fout: {exc}")
+        sys.exit(1)
     explanation = dossier.generate_explanation_text(
         target_name=args.target,
         target_kvk=target.get("kvk", ""),
         target_hq=target.get("hq_address", ""),
-        total_locations=len(locations)
+        total_locations=len(reportable)
     )
 
-    print(f"Dossier CSV gegenereerd: {csv_path}")
+    print(f"Dossier CSV gegenereerd: {csv_path} ({len(reportable)} reviewklare locaties)")
     print(f"Verklaringstekst ({len(explanation)} tekens):\n")
     print(explanation)
 
@@ -91,12 +96,21 @@ def cmd_submit(args):
         print(f"Fout: Geen locaties beschikbaar voor '{args.target}'.")
         sys.exit(1)
 
-    csv_path = dossier.export_dossier_csv(args.target, locations)
+    if not args.confirm:
+        print("Geen indiening uitgevoerd. Controleer het dossier en herhaal met --confirm om het formulier werkelijk te verzenden.")
+        return
+
+    reportable = [loc for loc in locations if loc.get("is_reportable", loc.get("is_fraud", False))]
+    try:
+        csv_path = dossier.export_dossier_csv(args.target, reportable)
+    except ValueError as exc:
+        print(f"Fout: {exc}")
+        sys.exit(1)
     explanation = dossier.generate_explanation_text(
         target_name=args.target,
         target_kvk=target.get("kvk", ""),
         target_hq=target.get("hq_address", ""),
-        total_locations=len(locations)
+        total_locations=len(reportable)
     )
 
     print(f"Verzenden van Redressal-klacht voor '{args.target}' naar Google...")
@@ -113,7 +127,7 @@ def cmd_submit(args):
             dossier_path=str(csv_path),
             filled_screenshot=res.get("filled_screenshot"),
             result_screenshot=res.get("result_screenshot"),
-            status="submitted"
+            status="awaiting_google_review"
         )
 
         # Automatically copy forum payload
@@ -139,8 +153,6 @@ def cmd_forum(args):
     locations = db.get_locations(args.target)
     payload = forum.build_community_payload(
         target_name=args.target,
-        target_kvk=target.get("kvk", ""),
-        target_hq=target.get("hq_address", ""),
         case_id=args.case_id,
         audited_locations=locations
     )
@@ -171,6 +183,34 @@ def cmd_list():
         for s in submissions:
             print(f"- Target: {s.get('target_name')} | Case ID: {s.get('case_id')} | Datum: {s.get('created_at')} | Status: {s.get('status')}")
 
+    print("\n--- Opvolgstatus ---")
+    for item in db.submission_status_summary():
+        print(f"- {item['status']}: {item['total']}")
+
+def cmd_update_case(args):
+    """Record the observed Google outcome for a case."""
+    db.init_db()
+    updated = db.update_submission_status(args.case_id, args.status)
+    if not updated:
+        print(f"Fout: Case ID '{args.case_id}' niet gevonden.")
+        sys.exit(1)
+    print(f"Case {args.case_id} bijgewerkt naar: {args.status}")
+
+def cmd_campaign(args):
+    """Prepare evidence-gated batch dossiers for a coordinated reporting campaign."""
+    db.init_db()
+    try:
+        manifest_path, manifest = campaign.build_campaign(args.target, args.batch_size)
+    except FileExistsError:
+        print("Fout: campagne-uitvoer bestaat al; probeer het opnieuw.")
+        sys.exit(1)
+    except ValueError as exc:
+        print(f"Fout: {exc}")
+        sys.exit(1)
+    print(f"Campagne voorbereid: {manifest_path}")
+    print(f"Reviewklare locaties: {manifest['total_review_ready_locations']} | batches: {len(manifest['batches'])}")
+    print("Er is niets extern verstuurd. Controleer elke batch voordat je deze via de aangegeven route indient.")
+
 def main():
     parser = argparse.ArgumentParser(description="GBP Sentinel: Anti-Spam & Redressal Automatisering")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -200,6 +240,7 @@ def main():
     p_submit.add_argument("--target", required=True, help="Naam van het target")
     p_submit.add_argument("--url", help="Publieke Maps URL")
     p_submit.add_argument("--headed", action="store_true", help="Browser zichtbaar openen")
+    p_submit.add_argument("--confirm", action="store_true", help="Bevestig dat het gecontroleerde dossier werkelijk mag worden ingediend")
 
     # forum
     p_forum = subparsers.add_parser("forum", help="Genereer community escalatie en zet op klembord")
@@ -208,6 +249,14 @@ def main():
 
     # list
     subparsers.add_parser("list", help="Toon alle targets en submissions")
+
+    p_update = subparsers.add_parser("update-case", help="Leg de handmatig gecontroleerde Google-uitkomst vast")
+    p_update.add_argument("--case-id", required=True, help="Google Case ID")
+    p_update.add_argument("--status", required=True, choices=["awaiting_google_review", "follow_up_sent", "actioned", "no_action", "closed"])
+
+    p_campaign = subparsers.add_parser("campaign", help="Maak bewijsgebonden massameld-batches zonder ze te verzenden")
+    p_campaign.add_argument("--target", help="Beperk de campagne tot één target")
+    p_campaign.add_argument("--batch-size", type=int, default=20, help="Aantal locaties per batch (standaard: 20)")
 
     args = parser.parse_args()
 
@@ -225,6 +274,10 @@ def main():
         cmd_forum(args)
     elif args.command == "list":
         cmd_list()
+    elif args.command == "update-case":
+        cmd_update_case(args)
+    elif args.command == "campaign":
+        cmd_campaign(args)
 
 if __name__ == "__main__":
     main()
