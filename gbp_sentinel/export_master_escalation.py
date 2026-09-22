@@ -27,7 +27,7 @@ def export_master_dossier():
     cur.execute("SELECT COUNT(*) FROM locations")
     total_locs = cur.fetchone()[0]
 
-    cur.execute("SELECT thread_id, url, title, status FROM community_posts ORDER BY id ASC")
+    cur.execute("SELECT thread_id, thread_url, title, status FROM community_posts ORDER BY id ASC")
     community_posts = cur.fetchall()
 
     print(f"Loaded {len(rows)} submitted targets across {total_locs} locations.")
