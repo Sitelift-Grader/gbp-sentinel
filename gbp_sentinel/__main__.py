@@ -300,6 +300,22 @@ def main():
     p_confirm_case.add_argument("--case-id", required=True, help="Google Case ID")
     p_confirm_case.add_argument("--note", help="Optionele notitie, bijvoorbeeld datum of onderwerpregel")
 
+    p_verify = subparsers.add_parser("verify-cases", help="Beheer e-mailverificatie en Google Case statussen")
+    p_verify.add_argument("--list", action="store_true", help="Toon cases die wachten op bevestiging")
+    p_verify.add_argument("--verify-all", action="store_true", help="Markeer alle openstaande cases als geverifieerd")
+    p_verify.add_argument("--verify", metavar="CASE_ID", help="Markeer een specifieke case als geverifieerd")
+    p_verify.add_argument("--status", nargs=2, metavar=("CASE_ID", "STATUS"), help="Werk Google status bij")
+    p_verify.add_argument("--summary", action="store_true", help="Toon verificatiestatistieken")
+
+    p_liveness = subparsers.add_parser("check-liveness", help="Controleer actuele status van locaties op Google Maps")
+    p_liveness.add_argument("--target", help="Controleer alle locaties van een specifiek target")
+    p_liveness.add_argument("--id", type=int, help="Controleer een specifieke locatie per ID")
+    p_liveness.add_argument("--all", action="store_true", help="Controleer alle locaties")
+    p_liveness.add_argument("--limit", type=int, help="Maximaal aantal te controleren locaties")
+    p_liveness.add_argument("--summary", action="store_true", help="Toon liveness samenvatting")
+
+    subparsers.add_parser("export-master", help="Exporteer het geconsolideerde Sterling Sky masterrapport")
+
     args = parser.parse_args()
 
     if args.command == "init":
@@ -326,6 +342,23 @@ def main():
         cmd_follow_up(args)
     elif args.command == "confirm-case":
         cmd_confirm_case(args)
+    elif args.command == "verify-cases":
+        if args.list or args.verify_all or args.verify or args.status:
+            verify_cases.cli()
+        else:
+            verify_cases.print_summary()
+    elif args.command == "check-liveness":
+        if args.id:
+            res = liveness.check_location(args.id)
+            print(f"Locatie #{args.id}: {res['status']} - {res.get('details')}")
+        elif args.target:
+            liveness.check_target(args.target, limit=args.limit)
+        elif args.all:
+            liveness.check_all_locations(limit=args.limit)
+        else:
+            liveness.print_liveness_summary()
+    elif args.command == "export-master":
+        export_master_escalation.export_master_dossier()
 
 if __name__ == "__main__":
     main()
