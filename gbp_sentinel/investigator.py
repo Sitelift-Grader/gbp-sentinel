@@ -77,7 +77,7 @@ def build_network_report(target_name=None, min_shared=2, output_dir=None):
                 continue
             component.add(current)
             for signal in linked[current]:
-                pending.extend(linked[index] for linked_index in indicators[signal])
+                pending.extend(indicators[signal])
         visited.update(component)
         members = [records[index] for index in sorted(component)]
         signals = sorted({f"{kind}:{value}" for index in component for kind, value in linked[index]})
