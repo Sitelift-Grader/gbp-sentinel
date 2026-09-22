@@ -117,7 +117,16 @@ Key Case IDs for Escalation:
 10. Criminal Law (15 listings): Case ID 4-0573000040881
 11. Employment Law (24 listings): Case ID 5-4719000041187
 12. Personal Injury Law (25 listings): Case ID 9-8728000041558
-13. SIXT Enterprise Keyword Stuffing: Case ID 0-4316000041158
+13. Seamless Flooring / Gietvloeren (27 listings): Case IDs 4-6387000041956, 1-4085000041541
+14. Dormer Construction / Dakkapellen (24 listings): Case IDs 0-8488000041887, 6-4816000042092
+15. Property Clearance / Woningontruiming (26 listings): Case IDs 7-8907000041076, 3-2201000041903
+16. Solar Energy / Zonnepanelen (18 listings): Case ID 9-5809000041172
+17. Water Softeners / Waterontharders (14 listings): Case ID 8-9134000042221
+18. SIXT Enterprise Keyword Stuffing: Case ID 0-4316000041158
+
+Official Google Help Community Escalation Thread (Thread ID: 469151040):
+https://support.google.com/business/thread/469151040/industrial-google-maps-spam-network-in-netherlands-1-060-fake-listings-73-case-ids
+(Category: Policies and guidelines)
 
 Could a Platinum/Diamond Product Expert please escalate this coordinated syndicate to Google's Trust & Safety Spam Engineering team for account-level manual action?
 
