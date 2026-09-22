@@ -162,7 +162,55 @@ def _get_address(page: Page) -> Optional[str]:
 def inspect_place(
     page: Page,
     url: str,
+def check_replacement(page: Page, expected_name: str, address: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """Search Google Maps to check if a replacement profile was spawned for this business."""
+    if not expected_name:
+        return None
+    search_query = f"{expected_name} {address}" if address else expected_name
+    search_query = re.sub(r"[^\w\s]", " ", search_query)
+    search_url = f"https://www.google.com/maps/search/{'+'.join(search_query.split())}"
+    try:
+        page.goto(search_url, timeout=20000, wait_until="domcontentloaded")
+        _handle_cookie_consent(page)
+        page.wait_for_timeout(2500)
+
+        # Check if single place view opened directly
+        title = _get_title(page)
+        cur_addr = _get_address(page)
+
+        if title and not _names_differ(expected_name, title):
+            return {
+                "replacement_found": True,
+                "current_title": title,
+                "current_address": cur_addr,
+                "new_url": page.url,
+            }
+
+        # Check if search results list opened
+        results = page.locator('a[href*="/maps/place/"]').all()
+        for res in results[:3]:
+            res_label = res.get_attribute("aria-label") or ""
+            if res_label and not _names_differ(expected_name, res_label):
+                res.click()
+                page.wait_for_timeout(2500)
+                cur_title = _get_title(page) or res_label
+                cur_addr = _get_address(page)
+                return {
+                    "replacement_found": True,
+                    "current_title": cur_title,
+                    "current_address": cur_addr,
+                    "new_url": page.url,
+                }
+    except Exception:
+        pass
+    return None
+
+
+def inspect_place(
+    page: Page,
+    url: str,
     expected_name: Optional[str] = None,
+    expected_address: Optional[str] = None,
     timeout_ms: int = 25000,
 ) -> Dict[str, Any]:
     """Inspect a Google Maps place URL and determine its liveness status."""
@@ -196,13 +244,6 @@ def inspect_place(
     if "/place//@" in final_url or ("/place/" not in final_url and "/@" in final_url):
         status = "REMOVED"
         details["reason"] = "Redirected to empty coordinate map"
-        return {
-            "status": status,
-            "current_title": None,
-            "current_address": None,
-            "details": details,
-            "url": final_url,
-        }
 
     body_text = _get_body_text(page)
 
@@ -223,23 +264,47 @@ def inspect_place(
         "Temporarily closed",
     ]
 
-    if any(phrase.lower() in body_text.lower() for phrase in removed_phrases):
-        status = "REMOVED"
-        details["reason"] = "Body text indicates listing not found"
-        return {
-            "status": status,
-            "current_title": None,
-            "current_address": None,
-            "details": details,
-            "url": final_url,
-        }
+    if status == "UNKNOWN":
+        if any(phrase.lower() in body_text.lower() for phrase in removed_phrases):
+            status = "REMOVED"
+            details["reason"] = "Body text indicates listing not found"
+        elif any(phrase.lower() in body_text.lower() for phrase in permanently_closed_phrases):
+            status = "PERMANENTLY_CLOSED"
+            details["reason"] = "Body text indicates permanently closed"
+        elif any(phrase.lower() in body_text.lower() for phrase in temporarily_closed_phrases):
+            status = "TEMPORARILY_CLOSED"
+            details["reason"] = "Body text indicates temporarily closed"
 
-    if any(phrase.lower() in body_text.lower() for phrase in permanently_closed_phrases):
-        status = "PERMANENTLY_CLOSED"
-        details["reason"] = "Body text indicates permanently closed"
-    elif any(phrase.lower() in body_text.lower() for phrase in temporarily_closed_phrases):
-        status = "TEMPORARILY_CLOSED"
-        details["reason"] = "Body text indicates temporarily closed"
+    # If removed, perform forensic search to see if spammer spawned a replacement listing
+    if status == "REMOVED" and expected_name:
+        replacement = check_replacement(page, expected_name, expected_address)
+        if replacement and replacement.get("replacement_found"):
+            status = "REGENERATED_REPLACEMENT"
+            details["replacement_found"] = True
+            details["new_url"] = replacement.get("new_url")
+            details["current_title"] = replacement.get("current_title")
+            details["current_address"] = replacement.get("current_address")
+            details["reason"] = (
+                f"Original CID deleted by Google, but spammer re-created listing under new CID: "
+                f"'{replacement.get('current_address')}' (New URL: {replacement.get('new_url')})"
+            )
+            return {
+                "status": status,
+                "current_title": replacement.get("current_title"),
+                "current_address": replacement.get("current_address"),
+                "details": details,
+                "url": replacement.get("new_url") or final_url,
+            }
+        else:
+            status = "CONFIRMED_REMOVED"
+            details["reason"] = "Original listing deleted by Google and no active replacement found"
+            return {
+                "status": status,
+                "current_title": None,
+                "current_address": None,
+                "details": details,
+                "url": final_url,
+            }
 
     # 3. Active place card verification
     title = _get_title(page)
