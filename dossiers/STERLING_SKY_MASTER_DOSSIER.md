@@ -1,7 +1,7 @@
 # Industrial-Scale Google Business Profile Spam Network in the Netherlands
 ### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation
 
-**Generated:** 2026-09-22 13:34:46
+**Generated:** 2026-09-22 13:35:43
 **Total Official Google Redressal Submissions:** 78 cases on file
 **Total Documented Fraudulent Locations:** 1204 listings
 
