@@ -76,24 +76,30 @@ def _update_location(
 # ---------------------------------------------------------------------------
 
 
-def _handle_cookie_consent(page: Page) -> None:
-    """Dismiss common Google Maps cookie consent dialogs."""
-    selectors = [
-        "button:has-text('Alles accepteren')",
-        "button:has-text('Accept all')",
-        "button:has-text('Ik ga akkoord')",
-        "button:has-text('Accept all cookies')",
-        "button:has-text('Alle cookies accepteren')",
-    ]
-    for selector in selectors:
-        try:
-            button = page.locator(selector).first
-            if button.is_visible(timeout=1500):
-                button.click(timeout=3000)
-                page.wait_for_timeout(500)
-                return
-        except Exception:
-            continue
+def _handle_cookie_consent(page: Page) -> bool:
+    """Dismiss common Google Maps cookie consent dialogs and wait for navigation."""
+    if "consent.google" in page.url or page.locator("button:has-text('Alles accepteren')").count() > 0:
+        selectors = [
+            "button:has-text('Alles accepteren')",
+            "button:has-text('Accept all')",
+            "button:has-text('Ik ga akkoord')",
+            "button:has-text('Accept all cookies')",
+            "button:has-text('Alle cookies accepteren')",
+        ]
+        for selector in selectors:
+            try:
+                button = page.locator(selector).first
+                if button.is_visible(timeout=2000):
+                    button.click(timeout=4000)
+                    try:
+                        page.wait_for_url("**/maps/**", timeout=15000)
+                    except Exception:
+                        pass
+                    page.wait_for_timeout(3000)
+                    return True
+            except Exception:
+                continue
+    return False
 
 
 def _normalize_name(name: str) -> str:
