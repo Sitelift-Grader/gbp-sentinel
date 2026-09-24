@@ -172,16 +172,22 @@ class ReportGenerator:
 
         if submissions:
             lines.append("## Geregistreerde Google meldingen")
-            lines.append("| Datum | Kanaal | Status | Google Case ID |")
+            lines.append("| Datum | Type | Status | Google Case ID |")
             lines.append("| :--- | :--- | :--- | :--- |")
             for sub in submissions:
-                lines.append(f"| {sub['submission_date']} | `{sub['reporting_channel']}` | `{sub['status']}` | `{sub['google_case_id'] or 'In afwachting'}` |")
+                sub_date = sub.get("submitted_at") or sub.get("created_at") or "Onbekend"
+                sub_type = sub.get("submission_type") or "REDRESSAL_FORM"
+                sub_status = sub.get("status") or "PREPARED"
+                case_id_val = sub.get("google_case_id") or "In afwachting"
+                lines.append(f"| {sub_date} | `{sub_type}` | `{sub_status}` | `{case_id_val}` |")
             lines.append("")
 
         if outcomes:
             lines.append("## Waargenomen resultaten")
             for out in outcomes:
-                lines.append(f"- **{out['outcome_type']}** ({out['observation_date']}): {out['details']}")
+                out_date = out.get("verified_at") or out.get("created_at") or "Onbekend"
+                out_desc = out.get("description") or "Geen toelichting"
+                lines.append(f"- **{out['outcome_type']}** ({out_date}): {out_desc}")
             lines.append("")
 
         lines.append("## Recommended action")
