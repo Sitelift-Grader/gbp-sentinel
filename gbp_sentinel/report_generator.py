@@ -154,8 +154,9 @@ class ReportGenerator:
         submissions = db_v2.list_rows("submissions", where="case_id = ?", params=(case_id,), db_path=self.db_path)
         outcomes = db_v2.list_rows("outcomes", where="case_id = ?", params=(case_id,), db_path=self.db_path)
 
+        case_code = case.get("case_code") or case.get("case_identifier") or f"CASE-{case_id:05d}"
         lines: List[str] = []
-        lines.append(f"# Dossier: {case['case_identifier']}")
+        lines.append(f"# Dossier: {case_code}")
         lines.append(f"**Titel:** {case['title']}")
         lines.append(f"**Status:** `{case['status']}` | **Prioriteit:** `{case['priority']}`")
         lines.append(f"**Beoordelaar:** {case['reviewer_name'] or 'Nog niet toegewezen'}")
