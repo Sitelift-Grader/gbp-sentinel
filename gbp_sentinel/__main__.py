@@ -313,9 +313,54 @@ def cmd_network_report(args):
         json_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"Ruwe netwerkgraaf opgeslagen in {json_path}")
 
+def cmd_dashboard(args=None):
+    """Start het interactieve webdashboard."""
+    import uvicorn
+    host = getattr(args, "host", "127.0.0.1") if args else "127.0.0.1"
+    port = getattr(args, "port", 8000) if args else 8000
+    print("=" * 65)
+    print(" GBP SMOKER — Google Maps Spam & Network Investigation Engine")
+    print("=" * 65)
+    print(f" Webdashboard actief op: http://{host}:{port}/")
+    print(f" Lokale link:           http://localhost:{port}/")
+    print("=" * 65)
+    uvicorn.run("gbp_sentinel.api.server:app", host=host, port=port, reload=False)
+
+def cmd_report(args):
+    """Genereer een forensisch Markdown onderzoeksrapport."""
+    from .report_generator import ReportGenerator
+    rg = ReportGenerator()
+    if getattr(args, "network", None):
+        txt = rg.generate_network_report(args.network)
+    elif getattr(args, "case", None):
+        txt = rg.generate_case_report(args.case)
+    else:
+        print("Fout: Geef --network <id> of --case <id> op.")
+        return
+    if getattr(args, "output", None):
+        Path(args.output).write_text(txt, encoding="utf-8")
+        print(f"Rapport opgeslagen in {args.output}")
+    else:
+        print(txt)
+
 def main():
-    parser = argparse.ArgumentParser(description="GBP Sentinel: Anti-Spam & Redressal Automatisering")
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    parser = argparse.ArgumentParser(description="GBP SMOKER: Google Maps Spam & Network Investigation Engine")
+    subparsers = parser.add_subparsers(dest="command", required=False)
+
+    # dashboard & serve
+    p_dash = subparsers.add_parser("dashboard", help="Start het interactieve webdashboard")
+    p_dash.add_argument("--port", type=int, default=8000, help="Poortnummer (standaard: 8000)")
+    p_dash.add_argument("--host", default="127.0.0.1", help="Hostadres (standaard: 127.0.0.1)")
+
+    p_serve = subparsers.add_parser("serve", help="Start de REST API en webserver")
+    p_serve.add_argument("--port", type=int, default=8000, help="Poortnummer (standaard: 8000)")
+    p_serve.add_argument("--host", default="127.0.0.1", help="Hostadres (standaard: 127.0.0.1)")
+
+    # report
+    p_rep = subparsers.add_parser("report", help="Genereer forensisch Markdown onderzoeksrapport")
+    p_rep.add_argument("--network", type=int, help="Netwerk ID (bijv. 1 of 11)")
+    p_rep.add_argument("--case", type=int, help="Case ID (bijv. 1)")
+    p_rep.add_argument("--output", help="Optioneel doelbestand (.md)")
 
     # init
     subparsers.add_parser("init", help="Initialiseer de database")
@@ -399,7 +444,11 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == "init":
+    if not args.command or args.command in ("dashboard", "serve"):
+        cmd_dashboard(args)
+    elif args.command == "report":
+        cmd_report(args)
+    elif args.command == "init":
         cmd_init()
     elif args.command == "scan":
         cmd_scan(args)
