@@ -278,25 +278,25 @@ def inspect_place(
             status = "TEMPORARILY_CLOSED"
             details["reason"] = "Body text indicates temporarily closed"
 
-    # If removed, perform forensic search to see if spammer spawned a replacement listing
-    if status == "REMOVED" and expected_name:
-        replacement = check_replacement(page, expected_name, expected_address)
-        if replacement and replacement.get("replacement_found"):
-            status = "REGENERATED_REPLACEMENT"
-            details["replacement_found"] = True
-            details["new_url"] = replacement.get("new_url")
-            details["current_title"] = replacement.get("current_title")
-            details["current_address"] = replacement.get("current_address")
+    # If removed or empty URL, perform forensic search to see if listing is active on Google Maps
+    if (status == "REMOVED" or status == "UNKNOWN") and expected_name:
+        active_match = check_replacement(page, expected_name, expected_address)
+        if active_match and active_match.get("replacement_found"):
+            status = "STILL_ACTIVE"
+            details["verified_via_search"] = True
+            details["current_url"] = active_match.get("new_url")
+            details["current_title"] = active_match.get("current_title")
+            details["current_address"] = active_match.get("current_address")
             details["reason"] = (
-                f"Original CID deleted by Google, but spammer re-created listing under new CID: "
-                f"'{replacement.get('current_address')}' (New URL: {replacement.get('new_url')})"
+                f"Listing is active on Google Maps: "
+                f"'{active_match.get('current_title')}' at '{active_match.get('current_address')}'"
             )
             return {
                 "status": status,
-                "current_title": replacement.get("current_title"),
-                "current_address": replacement.get("current_address"),
+                "current_title": active_match.get("current_title"),
+                "current_address": active_match.get("current_address"),
                 "details": details,
-                "url": replacement.get("new_url") or final_url,
+                "url": active_match.get("new_url") or final_url,
             }
         else:
             status = "CONFIRMED_REMOVED"
