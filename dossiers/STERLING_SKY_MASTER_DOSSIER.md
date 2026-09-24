@@ -1,9 +1,9 @@
 # Industrial-Scale Google Business Profile Spam Network in the Netherlands
 ### Comprehensive Dossier for Product Experts / Google Trust & Safety Escalation
 
-**Generated:** 2026-09-22 13:35:43
-**Total Official Google Redressal Submissions:** 78 cases on file
-**Total Documented Fraudulent Locations:** 1204 listings
+**Generated:** 2026-09-24 18:10:31
+**Total Official Google Redressal Submissions:** 85 cases on file
+**Total Documented Fraudulent Locations:** 1291 listings
 
 ## 1. Executive Summary
 A sophisticated lead-generation syndicate is operating an industrial-scale Google Maps network across 35+ Dutch municipalities.
@@ -44,6 +44,7 @@ The operator systematically clones web templates across 18+ trade and profession
 | National Auto Sales Syndicate Part 2 (0XX-369 Network) | https://autoverkopenzwolle.com | `0-9937000042070` | pending_email_verification | 15 |
 | National Automobile Purchase Syndicate (0XX-369 Network) | https://autoinkoopamsterdam.com | `6-7366000041346` | pending_email_verification | 23 |
 | National Bathroom Renovation Syndicate  (0XX-369 Network) | https://badkamerrenovatieamsterdam.com | `2-7262000040808` | pending_email_verification | 18 |
+| National Cleaning Services Syndicate  (0XX-369 Network) | https://schoonmaakbedrijfdenhaag.net | `1-9750000041427` | pending_email_verification | 9 |
 | National Crawlspace Insulation Syndicate  (0XX-369 Network) | https://bodemisolatieamsterdam.com | `0-2418000042190` | pending_email_verification | 18 |
 | National Criminal Law Syndicate (0XX-369 Network) | https://strafrechtadvocaatamsterdam.com | `4-0573000040881` | pending_email_verification | 15 |
 | National Dormer Construction Syndicate Part 1 (0XX-369 Network) | https://dakkapelamsterdam.com | `0-8488000041887` | pending_email_verification | 18 |
@@ -53,6 +54,8 @@ The operator systematically clones web templates across 18+ trade and profession
 | National Facade Cleaning Syndicate Part 1 (0XX-369 Network) | https://gevelreinigingamsterdam.com | `0-6957000042014` | pending_email_verification | 17 |
 | National Facade Cleaning Syndicate Part 2 (0XX-369 Network) | https://gevelreinigingzoetermeer.com | `7-8796000041661` | pending_email_verification | 17 |
 | National Fencing and Gates Syndicate  (0XX-369 Network) | https://hekwerkamsterdam.net | `8-2256000042051` | pending_email_verification | 13 |
+| National Floor Insulation Syndicate Part 1 (0XX-369 Network) | https://vloerisolatieamsterdam.com | `0-4244000042084` | pending_email_verification | 18 |
+| National Floor Insulation Syndicate Part 2 (0XX-369 Network) | https://vloerisolatiealphenaandenrijn.com | `5-8470000041459` | pending_email_verification | 7 |
 | National Glazier Syndicate (0XX-369 Network) | https://glaszetterutrecht.net | `0-7911000041410` | pending_email_verification | 11 |
 | National Heat Pump Syndicate (0XX-369 Network) | https://warmtepompamsterdam.com | `1-6062000041232` | pending_email_verification | 12 |
 | National Home Renovation Syndicate (0XX-369 Network) | https://traprenovatieamsterdam.com | `1-2996000041154` | pending_email_verification | 19 |
@@ -75,12 +78,16 @@ The operator systematically clones web templates across 18+ trade and profession
 | National Pro Deo Lawyer Syndicate Part 4 (Smaller Municipalities) | https://prodeoadvocaatdeventer.com | `3-7223000041722` | pending_email_verification | 31 |
 | National Property Clearance Syndicate Part 1 (0XX-369 Network) | https://woningontruimingamsterdam.nl | `7-8907000041076` | pending_email_verification | 18 |
 | National Property Clearance Syndicate Part 2 (0XX-369 Network) | https://woningontruimingmaastricht.com | `3-2201000041903` | pending_email_verification | 8 |
+| National Roof Insulation Syndicate  (0XX-369 Network) | https://dakisolatieamsterdam.com | `2-4664000041691` | pending_email_verification | 18 |
 | National Roofing Syndicate (0XX-369 Network) | https://dakdekkeramsterdam.net | `7-1754000041660` | pending_email_verification | 15 |
 | National Roofing Syndicate Part 2 (0XX-369 Network) | https://dakdekkerzoetermeer.com | `0-1259000041782` | pending_email_verification | 10 |
 | National Seamless Flooring Syndicate Part 1 (0XX-369 Network) | https://gietvloeramsterdam.com | `4-6387000041956` | pending_email_verification | 18 |
 | National Seamless Flooring Syndicate Part 2 (0XX-369 Network) | https://gietvloerede.com | `1-4085000041541` | pending_email_verification | 9 |
 | National Sewer and Unblocking Syndicate (0XX-369 Network) | https://ontstoppingsbedrijfutrecht.net | `5-9473000041909` | pending_email_verification | 13 |
 | National Solar Energy Syndicate  (0XX-369 Network) | https://zonnepanelenamsterdam.net | `9-5809000041172` | pending_email_verification | 18 |
+| National Tenancy Law Syndicate  (0XX-369 Network) | https://huurrechtadvocaatamsterdam.com | `1-7174000042005` | pending_email_verification | 14 |
+| National Tree Care Syndicate Part 1 (0XX-369 Network) | https://boomverzorgingamsterdam.com | `7-5047000041383` | pending_email_verification | 18 |
+| National Tree Care Syndicate Part 2 (0XX-369 Network) | https://boomverzorgingvenlo.nl | `5-7764000041119` | pending_email_verification | 3 |
 | National Underfloor Heating Syndicate Part 1 (0XX-369 Network) | https://vloerverwarmingamsterdam.net | `5-7814000042082` | pending_email_verification | 18 |
 | National Underfloor Heating Syndicate Part 2 (0XX-369 Network) | https://vloerverwarmingede.com | `2-8720000042084` | pending_email_verification | 11 |
 | National Water Softener Syndicate  (0XX-369 Network) | https://waterontharderamsterdam.com | `8-9134000042221` | pending_email_verification | 14 |
