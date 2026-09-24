@@ -63,9 +63,9 @@ class GbpPolicyKB:
             source_date TEXT NOT NULL,
             last_verified TEXT NOT NULL,
             severity TEXT NOT NULL,
-            applicable_to TEXT NOT NULL,
-            examples TEXT NOT NULL,
-            counter_examples TEXT NOT NULL
+            applicable_to_json TEXT NOT NULL,
+            examples_json TEXT NOT NULL,
+            counter_examples_json TEXT NOT NULL
         )
     """
 
@@ -320,8 +320,8 @@ class GbpPolicyKB:
             sql = """
                 INSERT INTO policies (
                     policy_id, category, title, description, official_source_url,
-                    source_date, last_verified, severity, applicable_to,
-                    examples, counter_examples
+                    source_date, last_verified, severity, applicable_to_json,
+                    examples_json, counter_examples_json
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(policy_id) DO UPDATE SET
                     category=excluded.category,
@@ -331,9 +331,9 @@ class GbpPolicyKB:
                     source_date=excluded.source_date,
                     last_verified=excluded.last_verified,
                     severity=excluded.severity,
-                    applicable_to=excluded.applicable_to,
-                    examples=excluded.examples,
-                    counter_examples=excluded.counter_examples
+                    applicable_to_json=excluded.applicable_to_json,
+                    examples_json=excluded.examples_json,
+                    counter_examples_json=excluded.counter_examples_json
             """
             values = [
                 (
@@ -365,9 +365,9 @@ class GbpPolicyKB:
             source_date=row["source_date"],
             last_verified=row["last_verified"],
             severity=row["severity"],
-            applicable_to=json.loads(row["applicable_to"]),
-            examples=json.loads(row["examples"]),
-            counter_examples=json.loads(row["counter_examples"]),
+            applicable_to=json.loads(row["applicable_to_json"]),
+            examples=json.loads(row["examples_json"]),
+            counter_examples=json.loads(row["counter_examples_json"]),
         )
 
     def get_policy(self, policy_id: str) -> Optional[GbpPolicyRecord]:
