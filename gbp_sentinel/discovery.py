@@ -153,9 +153,13 @@ class DiscoveryEngine:
 
             existing = None
             if p["place_identifier"] != UNKNOWN:
-                existing = db_v2.get_by("businesses", "place_id", p["place_identifier"], db_path=self.db_path)
+                matches = db_v2.list_rows("businesses", where="place_id = ?", params=(p["place_identifier"],), limit=1, db_path=self.db_path)
+                if matches:
+                    existing = matches[0]
             if not existing and clean_name and p["address"] != UNKNOWN:
-                existing = db_v2.get_by("businesses", "name", p["business_name"], db_path=self.db_path)
+                matches = db_v2.list_rows("businesses", where="name = ?", params=(p["business_name"],), limit=1, db_path=self.db_path)
+                if matches:
+                    existing = matches[0]
 
             now_iso = datetime.now(timezone.utc).isoformat()
             if existing:
