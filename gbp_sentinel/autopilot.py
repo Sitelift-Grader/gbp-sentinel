@@ -45,6 +45,15 @@ KNOWN_FLEX_HUBS = {
 def harvest_niche_sites(niche: str, tlds=('.com', '.net', '.nl')) -> list[dict]:
     """Scan nationwide for syndicate sites in a specific niche."""
     print(f"\n[1/4] Autonoom zoeken naar syndicate websites voor '{niche}' over {len(DUTCH_CITIES)} steden...")
+    cache_file = config.SCRATCH_DIR / f"harvested_{niche}.json"
+    if cache_file.exists():
+        try:
+            cached = json.loads(cache_file.read_text(encoding="utf-8"))
+            if cached:
+                print(f"  -> Gebruik {len(cached)} geverifieerde locaties uit {cache_file.name}")
+                return cached
+        except Exception:
+            pass
     found = []
     for c in DUTCH_CITIES:
         for tld in tlds:
