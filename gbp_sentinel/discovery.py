@@ -136,12 +136,20 @@ class DiscoveryEngine:
                 continue
 
             # Normalization
-            norm_phone = normalizer.normalize_phone(p["phone"]) if p["phone"] != UNKNOWN else None
-            phone_prefix = normalizer.extract_phone_prefix(norm_phone) if norm_phone else None
-            clean_name = normalizer.normalize_business_name(p["business_name"])
-            clean_domain = normalizer.extract_domain(p["website"]) if p["website"] != UNKNOWN else None
-            postal_code = normalizer.extract_postal_code(p["address"]) if p["address"] != UNKNOWN else None
-            city = normalizer.extract_city(p["address"]) if p["address"] != UNKNOWN else self.location
+            phone_data = normalizer.normalize_phone(p["phone"]) if p["phone"] != UNKNOWN else {}
+            norm_phone = phone_data.get("e164") or None
+            phone_prefix = phone_data.get("pbx_prefix_6") or None
+
+            name_data = normalizer.normalize_business_name(p["business_name"])
+            clean_name = name_data.get("normalized_name") if isinstance(name_data, dict) else str(name_data)
+
+            domain_data = normalizer.normalize_domain(p["website"]) if p["website"] != UNKNOWN else {}
+            clean_domain = domain_data.get("domain") or None
+            canonical_url = domain_data.get("canonical_url") or (p["website"] if p["website"] != UNKNOWN else None)
+
+            addr_data = normalizer.normalize_address(p["address"]) if p["address"] != UNKNOWN else {}
+            postal_code = addr_data.get("postal_code") or None
+            city = addr_data.get("city") or self.location
 
             existing = None
             if p["place_identifier"] != UNKNOWN:
