@@ -13,9 +13,11 @@ from pydantic import BaseModel
 
 from .. import config, db_v2
 from ..case_management import CaseManager
+from ..discovery import DiscoveryEngine
 from ..evidence_engine import EvidenceEngine
 from ..network_engine import NetworkEngine
 from ..policy_kb import GbpPolicyKB
+from ..report_generator import ReportGenerator
 
 app = FastAPI(
     title="GBP SMOKER — Google Maps Spam & Network Investigation Engine",
@@ -51,6 +53,17 @@ class CaseCreateRequest(BaseModel):
     priority: str = "MEDIUM"
     reviewer_name: str = "Compliance Officer"
     notes: str = ""
+
+
+class DiscoverRequest(BaseModel):
+    location: str
+    radius_km: float = 25.0
+    search_terms: Optional[List[str]] = None
+    categories: Optional[List[str]] = None
+    language: str = "nl"
+    country: str = "NL"
+    max_results: int = 50
+    auto_ingest: bool = True
 
 
 # API Endpoints
@@ -217,6 +230,63 @@ def list_policies():
     policies = kb.list_policies()
     conn.close()
     return {"total": len(policies), "items": [p.__dict__ for p in policies]}
+
+
+@app.post("/api/discover")
+def run_discovery(req: DiscoverRequest):
+    engine = DiscoveryEngine(
+        location=req.location,
+        radius_km=req.radius_km,
+        search_terms=req.search_terms,
+        categories=req.categories,
+        language=req.language,
+        country=req.country,
+        max_results=req.max_results,
+        db_path=DB_PATH,
+    )
+    queries = engine.build_search_queries()
+    return {
+        "status": "configured",
+        "location": req.location,
+        "radius_km": req.radius_km,
+        "search_queries": queries,
+        "max_results": req.max_results,
+        "language": req.language,
+        "country": req.country,
+    }
+
+
+@app.get("/api/submissions")
+def list_submissions(limit: int = 50, offset: int = 0):
+    rows = db_v2.list_rows("submissions", order_by="id DESC", limit=limit, offset=offset, db_path=DB_PATH)
+    total = db_v2.count_rows("submissions", db_path=DB_PATH)
+    return {"total": total, "items": rows}
+
+
+@app.get("/api/monitoring")
+def list_monitoring(limit: int = 50, offset: int = 0):
+    events = db_v2.list_rows("monitoring_events", order_by="id DESC", limit=limit, offset=offset, db_path=DB_PATH)
+    outcomes = db_v2.list_rows("outcomes", order_by="id DESC", limit=limit, offset=offset, db_path=DB_PATH)
+    return {
+        "total_events": db_v2.count_rows("monitoring_events", db_path=DB_PATH),
+        "total_outcomes": db_v2.count_rows("outcomes", db_path=DB_PATH),
+        "events": events,
+        "outcomes": outcomes,
+    }
+
+
+@app.get("/api/reports/networks/{network_id}")
+def get_network_report(network_id: int):
+    rg = ReportGenerator(DB_PATH)
+    markdown = rg.generate_network_report(network_id)
+    return {"network_id": network_id, "report_markdown": markdown}
+
+
+@app.get("/api/reports/cases/{case_id}")
+def get_case_report(case_id: int):
+    rg = ReportGenerator(DB_PATH)
+    markdown = rg.generate_case_report(case_id)
+    return {"case_id": case_id, "report_markdown": markdown}
 
 
 # Interactive Web Dashboard
