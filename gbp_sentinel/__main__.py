@@ -242,6 +242,77 @@ def cmd_confirm_case(args):
     db.save_case_event(args.case_id, "email_confirmation_verified", args.note or "")
     print(f"E-mailbevestiging geregistreerd voor case {args.case_id}.")
 
+def cmd_score(args):
+    """Bereken kwantificeerbare misbruik- en spamscores."""
+    scorer = spam_scorer.GbpSpamScorer()
+    if getattr(args, "name", None):
+        loc = {
+            "name": args.name,
+            "address": getattr(args, "address", "") or "",
+            "phone": getattr(args, "phone", "") or "",
+            "actual_occupant": getattr(args, "address", "") or "",
+            "city": getattr(args, "city", "") or ""
+        }
+        res = scorer.calculate_abuse_score(loc)
+        kw = res["keyword_details"]
+        print("=" * 60)
+        print(f"SPAMSCORE ANALYSE: {args.name}")
+        print("=" * 60)
+        print(f"Overall Misbruikscore: {res['overall_score']} / 100 ({res['confidence']})")
+        print(f"Keyword Stuffing Score: {kw['score']} / 100 ({kw['level']})")
+        if kw.get("cleaned_brand_guess"):
+            print(f"Gedetecteerde echte merknaam: '{kw['cleaned_brand_guess']}'")
+        print("-" * 60)
+        print("Gedetecteerde indicatoren:")
+        for pt in res["evidence_points"]:
+            print(f"  • {pt}")
+        print("=" * 60)
+        return
+
+    if getattr(args, "target", None):
+        locs = db.get_locations(args.target)
+        if not locs:
+            print(f"Geen locaties gevonden voor target '{args.target}'.")
+            return
+        print(f"Scoren van {len(locs)} locaties voor '{args.target}'...")
+        scores = []
+        for loc in locs:
+            s = scorer.calculate_abuse_score(loc)
+            scores.append((loc, s))
+        
+        avg_score = sum(s["overall_score"] for _, s in scores) / len(scores)
+        print("=" * 60)
+        print(f"TARGET RISICOPROFIEL: {args.target}")
+        print(f"Totaal locaties: {len(locs)} | Gemiddelde misbruikscore: {avg_score:.1f} / 100")
+        print("=" * 60)
+        for loc, s in scores[:10]:
+            name = loc.get("name", "Onbekend")[:35]
+            city = loc.get("city", "")[:12]
+            print(f"{name:<37} | {city:<12} | Score: {s['overall_score']:>3} ({s['confidence']})")
+        if len(scores) > 10:
+            print(f"... en nog {len(scores) - 10} andere locaties.")
+        print("=" * 60)
+        return
+
+    print("Geef --target of --name op om te scoren.")
+
+def cmd_network_report(args):
+    """Genereer en exporteer de overkoepelende netwerkgraaf-analyse."""
+    engine = network_intelligence.NetworkIntelligenceEngine()
+    print("Analyseren van de gehele database voor netwerkclusters en syndicaten...")
+    report_md = engine.generate_intelligence_markdown()
+    
+    out_path = Path("dossiers/NETWORK_INTELLIGENCE_REPORT.md")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(report_md, encoding="utf-8")
+    print(f"Netwerkanalyse opgeslagen in {out_path}")
+
+    if getattr(args, "json", False):
+        data = engine.analyze_network_graph()
+        json_path = Path("dossiers/network_graph.json")
+        json_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"Ruwe netwerkgraaf opgeslagen in {json_path}")
+
 def main():
     parser = argparse.ArgumentParser(description="GBP Sentinel: Anti-Spam & Redressal Automatisering")
     subparsers = parser.add_subparsers(dest="command", required=True)
