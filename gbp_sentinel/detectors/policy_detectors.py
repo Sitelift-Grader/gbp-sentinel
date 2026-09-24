@@ -144,9 +144,19 @@ def _is_service_business(listing: Mapping[str, Any]) -> bool:
                 "loodgieter",
                 "elektricien",
                 "schilder",
+                "painter",
                 "aannemer",
                 "dakdekker",
                 "slotenmaker",
+            )
+        )
+    title = _first(listing, "title", "name", default="")
+    if title:
+        return any(
+            term in _fold(title)
+            for term in (
+                "loodgieter", "plumber", "dakdekker", "roofer", "slotenmaker", "locksmith",
+                "elektricien", "electrician", "schilder", "painter", "aannemer", "contractor"
             )
         )
     return _bool(_first(listing, "service_area_business", "sab", default=False))
