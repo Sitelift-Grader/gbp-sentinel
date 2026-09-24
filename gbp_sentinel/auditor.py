@@ -3,12 +3,14 @@
 import json
 import re
 from . import config
+from .spam_scorer import GbpSpamScorer
 
 class GbpAuditor:
     def __init__(self):
         self.virtual_keywords = []
         self.virtual_addresses = []
         self.parcel_chains = []
+        self.scorer = GbpSpamScorer()
         self._load_reference_data()
 
     def _load_reference_data(self):
