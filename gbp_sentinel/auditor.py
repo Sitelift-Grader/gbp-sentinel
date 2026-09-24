@@ -105,10 +105,23 @@ class GbpAuditor:
                 "Target geographic terms and trade keywords artificially injected into profile name."
             )
 
+        # 5. Composite Abuse & Spam Scoring
+        abuse_calc = self.scorer.calculate_abuse_score(loc)
+        kw_calc = abuse_calc.get("keyword_details", {})
+        spam_score = abuse_calc.get("overall_score", 0)
+        abuse_confidence = abuse_calc.get("confidence", "LOW")
+        kw_score = kw_calc.get("score", 0)
+        scoring_triggers = abuse_calc.get("evidence_points", [])
+
+        if spam_score >= 50 or kw_score >= 50:
+            for trigger in scoring_triggers:
+                if trigger not in evidence:
+                    evidence.append(trigger)
+
         # A single weak signal is useful for triage, but is not sufficient to
         # describe a listing as fraudulent or to include it in a complaint.
         strong_signals = {"known_virtual_office", "parcel_or_partner_location"}
-        is_reportable = bool(strong_signals.intersection(evidence))
+        is_reportable = bool(strong_signals.intersection(evidence)) or spam_score >= 65
         is_fraud = is_reportable
         if not is_reportable and evidence:
             violation_category = "needs_review"
@@ -136,7 +149,11 @@ class GbpAuditor:
             "violation_category": violation_category,
             "actual_occupant": actual_occupant,
             "kvk_status": kvk_status,
-            "violation_details": violation_details
+            "violation_details": violation_details,
+            "spam_score": spam_score,
+            "abuse_confidence": abuse_confidence,
+            "keyword_stuffing_score": kw_score,
+            "scoring_triggers": scoring_triggers
         }
 
     def audit_locations(self, locations: list, target_hq: str = "", target_kvk: str = "") -> list:
