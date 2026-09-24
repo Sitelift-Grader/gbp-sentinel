@@ -4,7 +4,7 @@ import argparse
 import sys
 import json
 from pathlib import Path
-from . import campaign, config, db, auditor, dossier, forum, investigator, scraper, submitter, verify_cases, liveness, export_master_escalation
+from . import campaign, config, db, auditor, dossier, forum, investigator, scraper, submitter, verify_cases, liveness, export_master_escalation, spam_scorer, network_intelligence
 
 def cmd_init():
     """Initialize database and directories."""
