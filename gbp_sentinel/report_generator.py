@@ -57,9 +57,12 @@ class ReportGenerator:
             except Exception:
                 pass
 
+        net_code = net.get("network_code") or net.get("cluster_identifier") or f"NETWORK-{network_id:05d}"
+        net_type = net.get("network_type") or net.get("cluster_type") or "GENERAL_SYNDICATE"
+
         lines: List[str] = []
         lines.append(f"# Forensisch onderzoeksdossier: {net['name']}")
-        lines.append(f"**Netwerk ID:** `{net['cluster_identifier']}` | **Cluster type:** `{net['cluster_type']}`")
+        lines.append(f"**Netwerk ID:** `{net_code}` | **Cluster type:** `{net_type}`")
         lines.append(f"**Prioriteringsscore:** `{net['suspicion_score']}/100`")
         lines.append("> *Toelichting: Dit is een technische prioriteringsscore voor nader onderzoek en geen vaststelling van een policy violation.*")
         lines.append("")
@@ -101,16 +104,18 @@ class ReportGenerator:
             if b_findings:
                 lines.append("- **Relevante beleidspunten:**")
                 for bf in b_findings:
-                    lines.append(f"  - **{bf['policy_id']}**: {bf['finding_type']} (Status: `{bf['review_status']}`)")
+                    lines.append(f"  - **{bf['policy_id']}**: {bf.get('observation_text', 'Mogelijk beleidssignaal')} (Status: `{bf.get('status', 'POTENTIAL')}`)")
             lines.append("")
 
         # 4. Network relationships
         lines.append("## Network relationships")
         if relationships:
-            lines.append("| Bron ID | Doel ID | Relatie type | Betrouwbaarheid | Toelichting |")
+            lines.append("| Bron ID | Doel ID | Relatie type | Gewicht | Toelichting |")
             lines.append("| :--- | :--- | :--- | :--- | :--- |")
             for r in relationships[:50]:  # Cap at 50 for readability
-                lines.append(f"| {r['source_business_id']} | {r['target_business_id']} | `{r['relationship_type']}` | {r['confidence']:.2f} | {r['notes'] or 'Gedeelde infrastructuur'} |")
+                weight_val = r.get("weight", 1.0)
+                details = r.get("details_json") or "Gedeelde infrastructuur"
+                lines.append(f"| {r['source_business_id']} | {r['target_business_id']} | `{r['relationship_type']}` | {weight_val} | {details} |")
             if len(relationships) > 50:
                 lines.append(f"\n*Tabel afgekapt op 50 van {len(relationships)} relaties. Zie de interactieve graaf voor het volledige overzicht.*")
         else:
@@ -120,11 +125,11 @@ class ReportGenerator:
         # 5. Policy mapping
         lines.append("## Policy mapping")
         if findings_list:
-            lines.append("| Policy ID | Bedrijf ID | Observatie / Signaal | Betrouwbaarheid | Review status |")
+            lines.append("| Policy ID | Bedrijf ID | Observatie / Signaal | Betrouwbaarheid | Status |")
             lines.append("| :--- | :--- | :--- | :--- | :--- |")
             for f in findings_list[:50]:
-                obs = f.get("reasoning_summary") or f.get("finding_type")
-                lines.append(f"| `{f['policy_id']}` | {f['business_id']} | {obs} | {f['confidence']:.2f} | `{f['review_status']}` |")
+                obs = f.get("observation_text") or f.get("reasoning_summary") or "Beleidssignaal"
+                lines.append(f"| `{f['policy_id']}` | {f['business_id']} | {obs} | {f.get('confidence', 'HIGH')} | `{f.get('status', 'POTENTIAL')}` |")
         else:
             lines.append("Geen actieve beleidssignalen geconstateerd binnen dit cluster.")
         lines.append("")
