@@ -22,6 +22,7 @@ Missing values are explicitly stored as 'unknown' (never fabricated).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from collections.abc import Iterable, Mapping, Sequence
@@ -202,22 +203,21 @@ class DiscoveryEngine:
                 inserted_biz += 1
 
             # Snapshot recording
+            raw_json = json.dumps(p)
+            sha_hash = hashlib.sha256(raw_json.encode("utf-8")).hexdigest()
             db_v2.insert(
                 "business_snapshots",
                 {
                     "business_id": biz_id,
+                    "snapshot_timestamp": p["source_timestamp"],
                     "name": p["business_name"],
                     "address": p["address"],
                     "phone": p["phone"],
                     "website": p["website"],
                     "category": p["category"],
-                    "rating": float(p["rating"]) if p["rating"] != UNKNOWN and p["rating"].replace(".", "", 1).isdigit() else None,
-                    "review_count": int(p["review_count"]) if p["review_count"] != UNKNOWN and p["review_count"].isdigit() else None,
-                    "service_area": p["service_area"],
-                    "description": p["description"],
-                    "opening_hours": p["opening_hours"],
-                    "raw_payload_json": json.dumps(p),
-                    "snapshot_timestamp": p["source_timestamp"],
+                    "status_visible": "ACTIVE",
+                    "raw_payload_json": raw_json,
+                    "sha256_hash": sha_hash,
                 },
                 db_path=self.db_path,
             )
