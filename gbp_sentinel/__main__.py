@@ -385,6 +385,16 @@ def main():
     p_liveness.add_argument("--limit", type=int, help="Maximaal aantal te controleren locaties")
     p_liveness.add_argument("--summary", action="store_true", help="Toon liveness samenvatting")
 
+    p_score = subparsers.add_parser("score", help="Kwantificeerbare misbruik- en spamscores berekenen")
+    p_score.add_argument("--target", help="Doelwitnaam in database")
+    p_score.add_argument("--name", help="Enkele bedrijfsnaam om direct te scoren")
+    p_score.add_argument("--address", help="Adres bij --name")
+    p_score.add_argument("--phone", help="Telefoonnummer bij --name")
+    p_score.add_argument("--city", help="Plaatsnaam bij --name")
+
+    p_net = subparsers.add_parser("network-report", help="Genereer netwerk-analyse en clustering over alle locaties")
+    p_net.add_argument("--json", action="store_true", help="Exporteer ook ruwe netwerkgraaf als JSON")
+
     subparsers.add_parser("export-master", help="Exporteer het geconsolideerde Sterling Sky masterrapport")
 
     args = parser.parse_args()
@@ -430,6 +440,10 @@ def main():
             liveness.print_liveness_summary()
     elif args.command == "export-master":
         export_master_escalation.export_master_dossier()
+    elif args.command == "score":
+        cmd_score(args)
+    elif args.command == "network-report":
+        cmd_network_report(args)
 
 if __name__ == "__main__":
     main()
