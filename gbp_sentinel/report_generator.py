@@ -96,8 +96,10 @@ class ReportGenerator:
             lines.append(f"- **Adres:** {b['address'] or 'Niet vermeld / Service-area'}")
             lines.append(f"- **Plaats:** {b['city'] or 'Onbekend'}")
             lines.append(f"- **Telefoon:** {b['phone'] or 'Onbekend'} (genormaliseerd: `{b['normalized_phone'] or 'Geen'}`)")
-            lines.append(f"- **Website:** {b['website'] or 'Geen'}")
-            lines.append(f"- **Status in register:** `{b['status']}`")
+            website_url = b.get("canonical_url") or b.get("website") or b.get("domain") or "Geen"
+            source_st = b.get("source_status") or b.get("status") or "Onbekend"
+            lines.append(f"- **Website:** {website_url}")
+            lines.append(f"- **Status in register:** `{source_st}`")
 
             # Matched findings for this business
             b_findings = [f for f in findings_list if f["business_id"] == b["id"]]
