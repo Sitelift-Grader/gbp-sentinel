@@ -468,6 +468,10 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
     <button onclick="switchTab('businesses')" id="tabBtn-businesses" class="pb-3 font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-200">Bedrijven & profielen</button>
     <button onclick="switchTab('policies')" id="tabBtn-policies" class="pb-3 font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-200">Beleidskennisbank</button>
     <button onclick="switchTab('cases')" id="tabBtn-cases" class="pb-3 font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-200">Case management</button>
+    <button onclick="switchTab('studio')" id="tabBtn-studio" class="pb-3 font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center gap-1.5">
+      <span>Keyword stuffing studio</span>
+      <span class="px-1.5 py-0.5 text-[10px] bg-indigo-900/60 text-indigo-300 rounded font-bold">NIEUW</span>
+    </button>
   </div>
 
   <!-- Tab 1: Networks & Graph -->
