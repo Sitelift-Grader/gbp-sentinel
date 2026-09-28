@@ -484,6 +484,10 @@ def main():
     p_serve.add_argument("--port", type=int, default=8000, help="Poortnummer (standaard: 8000)")
     p_serve.add_argument("--host", default="127.0.0.1", help="Hostadres (standaard: 127.0.0.1)")
 
+    p_studio = subparsers.add_parser("studio", help="Start de visuele Keyword Stuffing Studio in de browser")
+    p_studio.add_argument("--port", type=int, default=8000, help="Poortnummer (standaard: 8000)")
+    p_studio.add_argument("--host", default="127.0.0.1", help="Hostadres (standaard: 127.0.0.1)")
+
     # report
     p_rep = subparsers.add_parser("report", help="Genereer forensisch Markdown onderzoeksrapport")
     p_rep.add_argument("--network", type=int, help="Netwerk ID (bijv. 1 of 11)")
