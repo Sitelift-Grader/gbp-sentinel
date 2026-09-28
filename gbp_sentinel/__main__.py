@@ -547,6 +547,17 @@ def main():
     p_net = subparsers.add_parser("network-report", help="Genereer netwerk-analyse en clustering over alle locaties")
     p_net.add_argument("--json", action="store_true", help="Exporteer ook ruwe netwerkgraaf als JSON")
 
+    p_sanitize = subparsers.add_parser("sanitize", help="Geautomatiseerde profielsanering en keyword stuffing aanpak")
+    p_sanitize.add_argument("--target", help="Doelwitnaam in database")
+    p_sanitize.add_argument("--title", help="Enkele titel om te analyseren en saneren")
+    p_sanitize.add_argument("--website", help="Optionele website URL bij --title")
+    p_sanitize.add_argument("--address", help="Optioneel adres bij --title")
+    p_sanitize.add_argument("--list-edits", action="store_true", help="Toon geregistreerde bewerkingen uit database")
+    p_sanitize.add_argument("--status", help="Filter status voor --list-edits")
+    p_sanitize.add_argument("--login", action="store_true", help="Open interactief browservenster voor Google login")
+    p_sanitize.add_argument("--apply-edits", action="store_true", help="Dien goedgekeurde bewerkingen in via Google Maps")
+    p_sanitize.add_argument("--headed", action="store_true", help="Browser zichtbaar tonen tijdens Maps bewerkingen")
+
     subparsers.add_parser("export-master", help="Exporteer het geconsolideerde Sterling Sky masterrapport")
 
     args = parser.parse_args()
@@ -555,6 +566,8 @@ def main():
         cmd_dashboard(args)
     elif args.command == "report":
         cmd_report(args)
+    elif args.command == "sanitize":
+        cmd_sanitize(args)
     elif args.command == "init":
         cmd_init()
     elif args.command == "scan":
