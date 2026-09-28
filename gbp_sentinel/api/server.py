@@ -18,6 +18,11 @@ from ..evidence_engine import EvidenceEngine
 from ..network_engine import NetworkEngine
 from ..policy_kb import GbpPolicyKB
 from ..report_generator import ReportGenerator
+from .. import db
+from ..name_sanitizer import NameSanitizer
+from ..maps_editor import MapsEditor
+from ..remediation_engine import RemediationEngine
+from ..scraper import GbpScraper
 
 app = FastAPI(
     title="GBP SMOKER — Google Maps Spam & Network Investigation Engine",
