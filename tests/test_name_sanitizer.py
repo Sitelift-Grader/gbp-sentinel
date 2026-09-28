@@ -60,6 +60,13 @@ class TestNameSanitizer(unittest.TestCase):
         self.assertEqual(res["action"], "KEEP")
         self.assertEqual(res["clean_name"], "Van Ons")
 
+    def test_prefix_service_segment_stripped(self):
+        raw = "Opleiding nagelstylist Amsterdam & Nagelstudio | Melanin Nails & Beauty"
+        res = self.sanitizer.sanitize(raw)
+        self.assertEqual(res["action"], "RENAME")
+        self.assertEqual(res["clean_name"], "Melanin Nails & Beauty")
+        self.assertIn("Opleiding nagelstylist Amsterdam & Nagelstudio", res["removed_parts"])
+
 
 if __name__ == "__main__":
     unittest.main()
