@@ -307,6 +307,96 @@ def get_case_report(case_id: int):
     return {"case_id": case_id, "report_markdown": markdown}
 
 
+# Keyword Stuffing Studio Endpoints
+@app.post("/api/sanitize/scan")
+def sanitize_scan(req: SanitizeScanRequest):
+    locs = []
+
+    if req.source in ("database", "auto"):
+        import sqlite3
+        db_path = Path(__file__).resolve().parent.parent.parent / "data" / "cases.db"
+        if db_path.exists():
+            conn = sqlite3.connect(db_path)
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute("SELECT data, target_name FROM locations").fetchall()
+            conn.close()
+
+            for row in rows:
+                try:
+                    loc = json.loads(row["data"])
+                except (json.JSONDecodeError, TypeError):
+                    continue
+
+                if not isinstance(loc, dict):
+                    continue
+
+                title = (loc.get("title") or loc.get("name") or "").lower()
+                target = (row["target_name"] or "").lower()
+
+                if req.niche.lower() in title or req.niche.lower() in target:
+                    if req.city:
+                        addr = (loc.get("address") or "").lower()
+                        if req.city.lower() in addr or req.city.lower() in title or req.city.lower() in target:
+                            locs.append(loc)
+                    else:
+                        locs.append(loc)
+
+            locs = locs[: req.limit]
+
+    if not locs or req.source == "live":
+        query = f"{req.niche} {req.city}".strip()
+        scraper = GbpScraper(headless=True)
+        locs = scraper.run_search([query])[: req.limit]
+
+    engine = RemediationEngine()
+    res = engine.process_batch(locs)
+
+    return {
+        "niche": req.niche,
+        "city": req.city,
+        "total": res["total"],
+        "renames": res["renames"],
+        "removals": res["removals"],
+        "kept": res["kept"],
+    }
+
+
+@app.post("/api/sanitize/apply")
+async def sanitize_apply(req: ApplyEditRequest):
+    editor = MapsEditor(headless=True)
+    result = await editor.suggest_name_edit(req.place_url, req.new_name, req.edit_id)
+
+    if req.edit_id:
+        db.update_profile_edit_status(
+            req.edit_id,
+            result.get("status", "failed"),
+            f"Maps edit: {result.get('error', 'ok')}",
+        )
+
+    return result
+
+
+@app.get("/api/sanitize/login-status")
+async def sanitize_login_status():
+    editor = MapsEditor(headless=True)
+    logged_in = await editor.check_login_status()
+    return {"is_logged_in": logged_in}
+
+
+@app.post("/api/sanitize/login")
+async def sanitize_login():
+    import asyncio
+    editor = MapsEditor()
+    asyncio.create_task(editor.open_interactive_login())
+    return {"status": "opened"}
+
+
+@app.get("/api/sanitize/edits")
+def sanitize_edits():
+    edits = db.list_profile_edits()
+    return {"total": len(edits), "items": edits}
+
+
 # Interactive Web Dashboard
 @app.get("/", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
