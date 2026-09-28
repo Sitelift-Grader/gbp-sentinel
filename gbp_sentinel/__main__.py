@@ -343,6 +343,113 @@ def cmd_report(args):
     else:
         print(txt)
 
+def cmd_sanitize(args):
+    """Geautomatiseerde profielsanering en keyword stuffing aanpak."""
+    import asyncio
+
+    if args.login:
+        asyncio.run(maps_editor.MapsEditor().open_interactive_login())
+        return
+
+    if args.list_edits:
+        edits = db.list_profile_edits(status=args.status)
+        if not edits:
+            print("Geen bewerkingen gevonden in de database.")
+            return
+
+        print(f"\nGeregistreerde bewerkingen in database ({len(edits)} items):")
+        print(f"{'ID':<5} {'Originele naam':<38} {'Gesaneerde naam':<35} {'Actie':<8} {'Spoor':<12} {'Status':<10}")
+        print("-" * 115)
+        for edit in edits:
+            orig = (edit.get('original_title') or '')[:36]
+            san = (edit.get('sanitized_title') or '')[:33]
+            act = edit.get('action_type') or ''
+            trk = edit.get('remediation_track') or ''
+            st = edit.get('status') or ''
+            print(f"{edit.get('id'):<5} {orig:<38} {san:<35} {act:<8} {trk:<12} {st:<10}")
+        print()
+        return
+
+    if args.apply_edits:
+        edits = db.list_profile_edits(status='proposed')
+        maps_edits = [e for e in edits if e.get('remediation_track') == 'MAPS_EDIT']
+        if not maps_edits:
+            print("Geen openstaande Google Maps bewerkingen ('proposed' met spoor 'MAPS_EDIT') om in te dienen.")
+            return
+
+        print(f"Starten van {len(maps_edits)} Google Maps bewerkingen via Playwright...")
+        engine = remediation_engine.RemediationEngine(headless=not args.headed)
+
+        async def _apply_all():
+            for e in maps_edits:
+                print(f"Indienen voorstel #{e['id']}: {e['sanitized_title']}...")
+                res = await engine.execute_maps_edit(e['id'])
+                st = res.get('status', 'unknown')
+                if st == 'submitted':
+                    print(f"  [OK] Ingediend. Screenshot: {res.get('screenshot')}")
+                elif st == 'login_required':
+                    print(f"  [LOGIN VEREIST] Google login nodig. Voer eerst 'python -m gbp_sentinel sanitize --login' uit.")
+                    break
+                else:
+                    print(f"  [FOUT] {res.get('error')}")
+
+        asyncio.run(_apply_all())
+        return
+
+    if args.title:
+        res = remediation_engine.RemediationEngine().process_listing({
+            "title": args.title,
+            "website": args.website or "",
+            "address": args.address or "",
+        })
+        print(f"\n--- Resultaat naamsanering ---")
+        print(f"Oorspronkelijke naam: {res['original_title']}")
+        print(f"Actie:               {res['action']}")
+        print(f"Gesaneerde naam:      {res['clean_name'] or '(geen handelsnaam)'}")
+        print(f"Betrouwbaarheid:      {res['confidence']}%")
+        if res['removed_parts']:
+            print(f"Verwijderde delen:    {', '.join(res['removed_parts'])}")
+        print(f"Toelichting:          {'; '.join(res['reasons'])}\n")
+        return
+
+    if args.target:
+        locs = db.get_locations(args.target)
+        if not locs:
+            print(f"Fout: Geen locaties gevonden voor target '{args.target}'.")
+            return
+
+        engine = remediation_engine.RemediationEngine()
+        summary = engine.process_batch(locs)
+
+        print(f"\nSaneringsoverzicht voor '{args.target}':")
+        print(f"Totaal geanalyseerd:  {summary['total']}")
+        print(f"Hernoemen (RENAME):   {len(summary['renames'])}")
+        print(f"Verwijderen (REMOVE): {len(summary['removals'])}")
+        print(f"Behouden (KEEP):      {len(summary['kept'])}\n")
+
+        if summary['renames']:
+            print("Voorstellen tot hernoemen (Spoor A - Maps Edits):")
+            for r in summary['renames']:
+                print(f"  - {r['original_title']}")
+                print(f"    --> {r['clean_name']} (Betrouwbaarheid: {r['confidence']}%)")
+            print()
+
+        if summary['removals']:
+            print("Profielen voor verwijdering (Spoor B - Redressal):")
+            for r in summary['removals']:
+                print(f"  - {r['original_title']}")
+                print(f"    --> {r['reasons'][0] if r['reasons'] else 'Exact match spam'}")
+            print()
+
+        return
+
+    print("Geef een doelwit of titel op. Voorbeelden:")
+    print("  python -m gbp_sentinel sanitize --target \"Rankingpartner\"")
+    print("  python -m gbp_sentinel sanitize --title \"Biab Nagels | Ferry's Nails Studio | Nagelstudio\"")
+    print("  python -m gbp_sentinel sanitize --list-edits")
+    print("  python -m gbp_sentinel sanitize --login")
+    print("  python -m gbp_sentinel sanitize --apply-edits --headed")
+
 def main():
     parser = argparse.ArgumentParser(description="GBP SMOKER: Google Maps Spam & Network Investigation Engine")
     subparsers = parser.add_subparsers(dest="command", required=False)
