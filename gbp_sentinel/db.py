@@ -201,3 +201,52 @@ def save_case_event(case_id, event_type, details=""):
             )
     finally:
         conn.close()
+
+def save_profile_edit(place_url, original_title, sanitized_title, action_type, remediation_track="MAPS_EDIT", status="proposed", screenshot_path="", notes=""):
+    """Record a proposed or executed profile edit."""
+    conn = _get_connection()
+    try:
+        with conn:
+            cursor = conn.execute(
+                """
+                INSERT INTO profile_edits 
+                (place_url, original_title, sanitized_title, action_type, remediation_track, status, screenshot_path, notes, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (place_url, original_title, sanitized_title, action_type, remediation_track, status, screenshot_path, notes, datetime.now().isoformat())
+            )
+            return cursor.lastrowid
+    finally:
+        conn.close()
+
+def list_profile_edits(status=None):
+    """Return list of profile edits, optionally filtered by status."""
+    conn = _get_connection()
+    try:
+        if status:
+            rows = conn.execute("SELECT * FROM profile_edits WHERE status = ? ORDER BY created_at DESC", (status,)).fetchall()
+        else:
+            rows = conn.execute("SELECT * FROM profile_edits ORDER BY created_at DESC").fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
+def update_profile_edit_status(edit_id, status, notes=None):
+    """Update lifecycle status of a profile edit."""
+    conn = _get_connection()
+    try:
+        with conn:
+            if notes is not None:
+                cursor = conn.execute(
+                    "UPDATE profile_edits SET status = ?, notes = ?, last_verified_at = ? WHERE id = ?",
+                    (status, notes, datetime.now().isoformat(), edit_id)
+                )
+            else:
+                cursor = conn.execute(
+                    "UPDATE profile_edits SET status = ?, last_verified_at = ? WHERE id = ?",
+                    (status, datetime.now().isoformat(), edit_id)
+                )
+            return cursor.rowcount
+    finally:
+        conn.close()
+
