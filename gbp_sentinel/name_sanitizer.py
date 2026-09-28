@@ -21,7 +21,8 @@ class NameSanitizer:
             # Webdesign en IT
             "website laten maken", "webdesign", "webdesigner", "internetbureau",
             "online marketing", "seo bureau", "seo specialist", "webshop laten maken",
-            "wordpress website", "applicatie ontwikkeling",
+            "wordpress website", "applicatie ontwikkeling", "website bouwen",
+            "website onderhoud", "webhosting", "domeinnaam", "ict",
             # Bouw en onderhoud
             "gevelrenovatie", "gevelreiniging", "bouwbedrijf", "aannemer",
             "dakdekker", "dakrenovatie", "daklekkage", "dakbedekking", "bitumen dak",
@@ -29,23 +30,40 @@ class NameSanitizer:
             "schilder", "schildersbedrijf", "binnenschilder", "buitenschilder",
             "stukadoor", "stucadoor", "pleisterwerk", "spuitwerk",
             "vochtbestrijding", "kelderafdichting", "kruipruimte isolatie",
-            "spouwmuurisolatie", "isolatiebedrijf",
+            "spouwmuurisolatie", "isolatiebedrijf", "dakisolatie", "vloerisolatie",
+            "glaszetter", "kozijnen", "kozijn vervangen", "deur vervangen",
+            "betonboring", "sloopwerk", "verbouwing", "renovatie",
             # Spoeddiensten
             "slotenmaker", "buitengesloten", "sleutelservice", "slot vervangen",
             "ontstoppingsbedrijf", "riool ontstoppen", "rioolreiniging", "afvoer ontstoppen",
             "ongediertebestrijding", "wespennest verwijderen", "muizen bestrijden",
             "elektricien", "storingsdienst", "stroomstoring", "groepenkast vervangen",
+            "loodgieter spoed", "daklekkage spoed", "kapotte cv",
             # Automotive
             "autobanden", "bandenservice", "banden", "apk", "auto onderhoud",
             "garage", "autobedrijf", "autoverhuur", "auto huren", "occasions",
-            "mobiele bandenservice", "autoinkoop", "auto verkopen",
+            "mobiele bandenservice", "autoinkoop", "auto verkopen", "autoschade",
+            "autopoetsbedrijf", "carwash", "wasstraat",
             # Verzorging en beauty
-            "nagelstudio", "biab nagels", "nagelstyliste", "manicure", "pedicure",
-            "kapper", "barbier", "kapsalon", "hairstudio", "barbershop",
+            "nagelstudio", "biab nagels", "nagelstyliste", "nagelstylist", "opleiding nagelstylist",
+            "manicure", "pedicure", "kapper", "barbier", "kapsalon", "hairstudio", "barbershop",
             "schoonheidssalon", "gezichtsbehandeling", "laser ontharen", "massage",
-            # Transport en overig
+            "visagie", "make-up", "wimperextensions", "waxstudio", "zonnebank",
+            # Schoonmaak en facilitaire diensten
+            "schoonmaakbedrijf", "schoonmaak", "glazenwasser", "glazenwasserij",
+            "facilitaire diensten", "interieurverzorging", "eindschoonmaak",
+            "bouwschoonmaak", "vloeren reinigen", "tapijtreiniging",
+            # Tuin en buitenruimte
+            "hovenier", "tuinonderhoud", "tuinaanleg", "bestrating", "grondverzet",
+            "bomen snoeien", "boomverzorging", "grasmaaien", "tuindesign",
+            # Beveiliging
+            "beveiliging", "beveiligingsbedrijf", "camerabewaking", "alarminstallatie",
+            "brandbeveiliging", "brandmeldinstallatie", "toegangscontrole",
+            # Overig
             "verhuisbedrijf", "verhuizers", "transportbedrijf", "witgoed reparatie",
-            "wasmachine reparatie", "fietsenmaker", "fietsenwinkel", "fietsreparatie"
+            "wasmachine reparatie", "fietsenmaker", "fietsenwinkel", "fietsreparatie",
+            "drukkerij", "drukwerk", "reclamebureau", "signmaking",
+            "schoorsteenveger", "rioolinspectie", "fundering", "onderhoudsbedrijf"
         }
 
         # Nederlandse steden en regio's die vaak worden toegevoegd
@@ -57,7 +75,23 @@ class NameSanitizer:
             "helmond", "hilversum", "amstelveen", "oss", "roosendaal", "schiedam",
             "spijkenisse", "vlissingen", "gouda", "alphen aan den rijn", "hoofddorp",
             "scheveningen", "leidsche rijn", "osdorp", "sloterdijk", "zuid", "noord",
-            "oost", "west", "centrum"
+            "oost", "west", "centrum", "den bosch", "apeldoorn", "enschede",
+            "haarlemmermeer", "purmerend", "hoorn", "alkmaar", "bergen op zoom",
+            "middelburg", "sittard", "heerlen", "kerkrade", "brunssum", "venray",
+            "weert", "roermond", "tilburg", "breda", "eindhoven", "helmond",
+            "oss", "uden", "veghel", "cuijk", "grave", "boxmeer", "gemert",
+            "boxtel", "oisterwijk", "gilze", "rijen", "goirle", "hilvarenbeek",
+            "best", "son", "nuenen", "geldrop", "mierlo", "valkenswaard",
+            "eersel", "bladel", "reusel", "bergeijk", "asten", "someren",
+            "deurne", "horst", "sevenum", "helenaveen", "griendtsveen",
+            "amsterdam zuidoost", "amsterdam noord", "amsterdam west",
+            "utrecht zuid", "utrecht oost", "utrecht west", "utrecht noord",
+            "den haag zuid", "den haag noord", "rotterdam zuid", "rotterdam noord",
+            "rotterdam west", "rotterdam oost", "eindhoven noord", "eindhoven zuid",
+            "tilburg noord", "tilburg zuid", "breda noord", "breda zuid",
+            "groningen noord", "groningen zuid", "nijmegen noord", "nijmegen zuid",
+            "arnhem noord", "arnhem zuid", "haarlem noord", "haarlem zuid",
+            "leiden noord", "leiden zuid", "maastricht noord", "maastricht zuid"
         }
 
         # Marketing buzzwords en claims
@@ -66,8 +100,35 @@ class NameSanitizer:
             "professionele", "goedkoop", "goedkope", "voordelig", "voordelige",
             "beste", "uw partner", "uw vakman", "spoed", "24/7", "24 7", "dag en nacht",
             "direct", "aan huis", "op locatie", "erkend", "gecertificeerd",
-            "ervaren", "kwaliteit", "service", "totaalservice", "snel", "snelle"
+            "ervaren", "kwaliteit", "service", "totaalservice", "snel", "snelle",
+            "top", "beste", "goed", "voordelig", "scherp", "laagste prijs",
+            "garantie", "inclusief", "gratis", "actie", "aanbieding", "deal"
         }
+
+        # Extraheer individuele service-woorden voor snelle token-lookup
+        self.single_service_tokens = set()
+        for kw in self.service_keywords:
+            for w in kw.split():
+                if len(w) > 3:
+                    self.single_service_tokens.add(w)
+        self.single_service_tokens.update({
+            "nagelstylist", "nagelstyliste", "opleiding", "cursus", "workshop",
+            "nagelstudio", "beauty", "salon", "kapper", "barbier", "onderhoud",
+            "reparatie", "spoedservice", "sleutel", "dakdekker", "gevel",
+            "schoonmaak", "hovenier", "beveiliging", "installatie", "montage",
+            "reiniging", "renovatie", "verbouwing", "isolatie", "verwarming",
+            "elektra", "loodgieter", "cv", "ketel", "dak", "kozijn", "raam"
+        })
+
+        # Woorden die vaak in merknamen voorkomen en nooit als spam worden gezien
+        self.brand_indicators = {
+            "b.v.", "bv", "vof", "holding", "group", "groep", "nederland", "holland",
+            "studio", "salon", "shop", "store", "company", "bedrijf", "onderneming",
+            "concept", "design", "creations", "works", "pro", "plus", "center", "centrum"
+        }
+
+        # Preposities die vaak in adressen/zoektermen voorkomen
+        self.prepositions = {"in", "te", "op", "voor", "bij", "aan", "met", "en", "van", "de", "het", "een", "der"}
 
     def _clean_segment(self, segment: str) -> str:
         """Schoont overtollige tekens en leestekens op van een tekstsegment."""
@@ -79,26 +140,37 @@ class NameSanitizer:
     def _is_service_or_location_segment(self, segment: str) -> bool:
         """Controleert of een segment hoofdzakelijk uit zoekwoorden, steden of claims bestaat."""
         lower = segment.lower().strip()
-        
+        if not lower:
+            return True
+
         # Exact match op bekende service of stad
         if lower in self.service_keywords or lower in self.cities:
             return True
 
-        words = lower.split()
+        # Controleer of het segment een stad bevat (als deel van de naam)
+        for city in self.cities:
+            if city in lower:
+                # Als de stad het grootste deel is, is het een locatiesegment
+                city_len = len(city)
+                if city_len / len(lower) > 0.5:
+                    return True
+
+        words = [re.sub(r"[^\w]", "", w) for w in lower.split()]
+        words = [w for w in words if w and w not in self.prepositions]
         if not words:
             return True
 
         matched_words = 0
         for w in words:
-            w_clean = re.sub(r"[^\w]", "", w)
             if (
-                w_clean in self.cities or 
-                w_clean in self.marketing_buzzwords or 
-                any(kw in lower for kw in ["specialist", "expert", "reparatie", "onderhoud", "laten maken", "spoed", "service"])
+                w in self.cities or 
+                w in self.marketing_buzzwords or 
+                w in self.single_service_tokens or
+                any(kw in w for kw in ["specialist", "expert", "reparatie", "onderhoud", "laten", "maken", "spoed", "service", "nagel", "dak", "slot", "gevel", "schoonmaak", "hovenier", "beveiliging", "installatie"])
             ):
                 matched_words += 1
 
-        # Als meer dan 50% van de woorden in het segment zoekwoorden zijn
+        # Als minstens 50% van de betekenisvolle woorden zoekwoorden zijn
         return (matched_words / len(words)) >= 0.5
 
     def _extract_brand_from_domain(self, website_url: str) -> str:
@@ -114,25 +186,43 @@ class NameSanitizer:
             if len(parts) >= 2:
                 name_part = parts[0]
                 # Filter generieke zoekwoorddomeinen eruit
-                if any(kw.replace(" ", "") in name_part for kw in ["websitelatenmaken", "dakdekker", "slotenmaker", "loodgieter"]):
+                generic_domains = ["websitelatenmaken", "dakdekker", "slotenmaker", "loodgieter", "schoonmaak", "hovenier", "beveiliging"]
+                if any(kw in name_part for kw in generic_domains):
                     return ""
-                return name_part.capitalize()
+                # Verwijder eventuele cijfers of streepjes die geen merk zijn
+                name_part = re.sub(r"^[0-9]+", "", name_part)
+                name_part = re.sub(r"[-_]", "", name_part)
+                return name_part
         except Exception:
             pass
         return ""
 
+    def _looks_like_brand(self, segment: str) -> bool:
+        """Controleert of een segment een echte merknaam kan zijn."""
+        lower = segment.lower().strip()
+        if not lower:
+            return False
+        # Heeft minimaal 2 letters
+        if len(re.sub(r"[^\w]", "", lower)) < 2:
+            return False
+        # Bevat een merkindicator
+        for indicator in self.brand_indicators:
+            if indicator in lower:
+                return True
+        # Heeft hoofdletters (behalve als het een afkorting is)
+        if any(c.isupper() for c in segment):
+            return True
+        # Alleen een woord dat geen service/locatie is
+        if self._is_service_or_location_segment(segment):
+            return False
+        # Als het segment uit 1-2 woorden bestaat en geen bekende service/locatie is
+        words = segment.split()
+        if len(words) <= 2:
+            return True
+        # Anders twijfelachtig
+        return False
+
     def sanitize(self, raw_title: str, website_url: str = None, address: str = None) -> dict[str, Any]:
-        """
-        Analyseert een Google Bedrijfsprofiel titel en bepaalt de juiste actie en gesaneerde naam.
-        
-        Retourneert een dict met:
-        - action: 'RENAME' (echt bedrijf met zoekwoorden) of 'REMOVE' (100% zoekwoord/spookprofiel)
-        - clean_name: De geverifieerde gesaneerde naam
-        - original_name: De oorspronkelijke titel
-        - removed_parts: Lijst van verwijderde aanhangsels
-        - confidence: Betrouwbaarheidsscore (0-100)
-        - reasons: Uitleg van de uitgevoerde bewerking
-        """
         raw = (raw_title or "").strip()
         if not raw:
             return {
@@ -147,17 +237,18 @@ class NameSanitizer:
         reasons = []
         removed_parts = []
 
-        # Stap 1: Controleer op 100% generieke zoektermen (zonder enige merknaam)
         lower_raw = raw.lower()
         clean_raw_no_space = re.sub(r"[^\w]", "", lower_raw)
         
+        # Pure zoekopdrachten (exact match spam)
         is_pure_query = (
             lower_raw in self.service_keywords or
             any(lower_raw == f"{svc} {city}" for svc in self.service_keywords for city in self.cities) or
             any(lower_raw == f"{svc} in {city}" for svc in self.service_keywords for city in self.cities) or
             clean_raw_no_space.startswith("123websitelatenmaken") or
             clean_raw_no_space.startswith("leadgenwebsite") or
-            lower_raw in ["website maken", "website laten maken", "webdesign den haag", "webdesign eindhoven"]
+            lower_raw in ["website maken", "website laten maken", "webdesign den haag", "webdesign eindhoven", "leadgen website den haag"] or
+            re.fullmatch(r"[\d\s]+", raw) is not None
         )
 
         if is_pure_query:
@@ -170,7 +261,6 @@ class NameSanitizer:
                 "reasons": ["Profielnaam bestaat voor 100% uit een generieke zoekterm zonder geregistreerde handelsnaam (Exact Match Spam). Verwijdering vereist."]
             }
 
-        # Stap 2: Splitsen op scheidingstekens (| - / : enzovoort)
         segments = self.delimiter_pattern.split(raw)
         cleaned_segments = [self._clean_segment(s) for s in segments if s.strip()]
 
@@ -184,37 +274,79 @@ class NameSanitizer:
                 else:
                     candidate_brands.append(seg)
 
-            if candidate_brands:
-                # Kies het beste merksegment (meestal het segment met de hoogste eigennaam-waarde)
-                chosen_brand = candidate_brands[0]
-                # Als er meerdere overblijven, kies diegene die het minst op een dienst lijkt
-                for cand in candidate_brands:
-                    if any(w in cand.lower() for w in ["b.v.", "bv", "studio", "salon", "groep", "nederland", "holland"]):
-                        chosen_brand = cand
-                        break
-                
-                # Strip eventuele resterende steden of zoekwoorden aan het einde
-                for city in self.cities:
-                    chosen_brand = re.sub(rf"\b{city}\b", "", chosen_brand, flags=re.IGNORECASE).strip()
-                
-                # Schoon dubbele spaties op
-                chosen_brand = re.sub(r"\s+", " ", chosen_brand).strip(" -|:,.")
-                
+            if not candidate_brands:
+                # Als alle segmenten als service werden gemarkeerd, is het puur spam
                 return {
-                    "action": "RENAME",
-                    "clean_name": chosen_brand,
+                    "action": "REMOVE",
+                    "clean_name": "",
+                    "original_name": raw,
+                    "removed_parts": removed_parts,
+                    "confidence": 95,
+                    "reasons": ["Alle segmenten bestaan uit generieke zoekwoorden of locaties zonder merknaam"]
+                }
+
+            domain_brand = self._extract_brand_from_domain(website_url)
+
+            # Kies het beste merksegment
+            chosen_brand = candidate_brands[0]
+            if len(candidate_brands) > 1:
+                # Prioriteit 1: Domein match
+                if domain_brand:
+                    for cand in candidate_brands:
+                        clean_cand = re.sub(r"[^\w]", "", cand.lower())
+                        if domain_brand in clean_cand or clean_cand in domain_brand:
+                            chosen_brand = cand
+                            reasons.append(f"Merksegment geverifieerd via websitedomein: '{cand}'")
+                            break
+                # Prioriteit 2: Bevat entiteitsindicator
+                if chosen_brand == candidate_brands[0]:
+                    for cand in candidate_brands:
+                        if any(w in cand.lower() for w in self.brand_indicators):
+                            chosen_brand = cand
+                            break
+                # Prioriteit 3: Langste segment dat als merk lijkt
+                if chosen_brand == candidate_brands[0]:
+                    best_len = 0
+                    for cand in candidate_brands:
+                        if self._looks_like_brand(cand) and len(cand) > best_len:
+                            best_len = len(cand)
+                            chosen_brand = cand
+
+            # Strip eventuele steden die nog in het gekozen segment hangen
+            for city in self.cities:
+                chosen_brand = re.sub(rf"\b{city}\b", "", chosen_brand, flags=re.IGNORECASE).strip()
+            
+            # Verwijder voorzetsels die overblijven
+            for prep in self.prepositions:
+                chosen_brand = re.sub(rf"\b{prep}\b", "", chosen_brand, flags=re.IGNORECASE).strip()
+
+            chosen_brand = re.sub(r"\s+", " ", chosen_brand).strip(" -|:,.")
+
+            # Als de uiteindelijke naam leeg is of te kort
+            if len(chosen_brand) < 2:
+                return {
+                    "action": "REMOVE",
+                    "clean_name": "",
                     "original_name": raw,
                     "removed_parts": removed_parts,
                     "confidence": 90,
-                    "reasons": reasons + [f"Zoekwoorden gestript: {', '.join(removed_parts)}"]
+                    "reasons": ["Na sanering resteert geen geldige handelsnaam"]
                 }
+            
+            return {
+                "action": "RENAME",
+                "clean_name": chosen_brand,
+                "original_name": raw,
+                "removed_parts": removed_parts,
+                "confidence": 90,
+                "reasons": reasons + [f"Zoekwoorden gestript: {', '.join(removed_parts)}"]
+            }
 
-        # Stap 3: Geen scheidingstekens, maar wel aanhangsels (bv. 'KwikFit Amsterdam' of 'Salon New Age ✂')
+        # Geen scheidingstekens, check op aanhangsels
         clean_name = raw
-        # Verwijder niet-standaard symbolen en emoji's
         clean_name = re.sub(r"[✂🔑💧🚗🔨]+", "", clean_name).strip()
 
-        # Controleer op achtervoegsels zoals 'Specialist in ...' of '- Autobanden, APK en onderhoud'
+        # Verwijder staart zoals " - service" of " | Amsterdam"
         tail_match = re.search(r"[-–|:]\s*(.+)$", clean_name)
         if tail_match:
             tail = tail_match.group(1).strip()
@@ -222,6 +354,27 @@ class NameSanitizer:
                 removed_parts.append(tail)
                 clean_name = clean_name[:tail_match.start()].strip()
                 reasons.append(f"Dienstaanhangsel verwijderd: '{tail}'")
+
+        # Strip stad aan einde indien niet de enige naam
+        for city in self.cities:
+            if clean_name.lower().endswith(f" {city}") and len(clean_name.split()) > 1:
+                clean_name = clean_name[:-(len(city) + 1)].strip()
+                removed_parts.append(city)
+                reasons.append(f"Plaatsnaam gestript: '{city}'")
+
+        # Verwijder voorzetsels aan het begin of einde
+        for prep in self.prepositions:
+            if clean_name.lower().startswith(f"{prep} "):
+                clean_name = clean_name[len(prep)+1:].strip()
+                removed_parts.append(prep)
+                reasons.append(f"Voorzetsel verwijderd: '{prep}'")
+            if clean_name.lower().endswith(f" {prep}"):
+                clean_name = clean_name[:-(len(prep)+1)].strip()
+                removed_parts.append(prep)
+                reasons.append(f"Voorzetsel verwijderd: '{prep}'")
+
+        # Verwijder dubbele spaties en leestekens aan randen
+        clean_name = re.sub(r"\s+", " ", clean_name).strip(" -|:,.")
 
         if removed_parts:
             return {
@@ -233,7 +386,6 @@ class NameSanitizer:
                 "reasons": reasons
             }
 
-        # Geen duidelijke keyword stuffing gevonden
         return {
             "action": "KEEP",
             "clean_name": raw,
