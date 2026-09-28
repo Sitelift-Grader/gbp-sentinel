@@ -71,6 +71,19 @@ class DiscoverRequest(BaseModel):
     auto_ingest: bool = True
 
 
+class SanitizeScanRequest(BaseModel):
+    niche: str
+    city: Optional[str] = ""
+    source: str = "auto"
+    limit: int = 20
+
+
+class ApplyEditRequest(BaseModel):
+    place_url: str
+    new_name: str
+    edit_id: Optional[int] = None
+
+
 # API Endpoints
 @app.get("/api/stats")
 def get_stats():
