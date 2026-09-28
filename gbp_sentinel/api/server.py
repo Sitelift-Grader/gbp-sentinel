@@ -545,6 +545,106 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
+  <!-- Tab 5: Keyword Stuffing Studio -->
+  <div id="tab-studio" class="hidden space-y-6">
+    <!-- Niche en zoekopdracht -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="card p-5">
+        <h3 class="text-sm font-semibold text-gray-200 mb-3">Kies een niche</h3>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="setNiche('Nagelstudio', '')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-900 border border-gray-700 text-xs text-gray-200 transition">💅 Nagelstudio</button>
+          <button onclick="setNiche('Webdesign', '')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-900 border border-gray-700 text-xs text-gray-200 transition">💻 Webdesign</button>
+          <button onclick="setNiche('Dakdekker', '')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-900 border border-gray-700 text-xs text-gray-200 transition">🔨 Dakdekker</button>
+          <button onclick="setNiche('Slotenmaker', '')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-900 border border-gray-700 text-xs text-gray-200 transition">🔑 Slotenmaker</button>
+          <button onclick="setNiche('Gevelrenovatie', '')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-900 border border-gray-700 text-xs text-gray-200 transition">🧱 Gevelrenovatie</button>
+          <button onclick="setNiche('Kapper', '')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-900 border border-gray-700 text-xs text-gray-200 transition">✂️ Kapper</button>
+          <button onclick="setNiche('Loodgieter', '')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-indigo-900 border border-gray-700 text-xs text-gray-200 transition">🚰 Loodgieter</button>
+        </div>
+      </div>
+
+      <div class="card p-5 lg:col-span-2">
+        <h3 class="text-sm font-semibold text-gray-200 mb-3">Zoek en analyseer profielen</h3>
+        <div class="flex flex-col md:flex-row gap-3">
+          <input id="studioNiche" type="text" placeholder="Niche of branche (bijv. nagelstudio, webdesign)..." class="bg-gray-800 border border-gray-700 px-3 py-2 rounded-lg text-xs text-gray-200 w-full placeholder-gray-500 focus:outline-none focus:border-indigo-500">
+          <input id="studioCity" type="text" placeholder="Plaatsnaam (optioneel)..." class="bg-gray-800 border border-gray-700 px-3 py-2 rounded-lg text-xs text-gray-200 w-full placeholder-gray-500 focus:outline-none focus:border-indigo-500">
+          <select id="studioSource" class="bg-gray-800 border border-gray-700 px-3 py-2 rounded-lg text-xs text-gray-200 focus:outline-none focus:border-indigo-500">
+            <option value="auto">Automatisch</option>
+            <option value="database">Alleen database</option>
+            <option value="live">Live Google Maps scan</option>
+          </select>
+          <button id="studioScanBtn" onclick="runSanitizeScan()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition">🔍 Zoek en analyseer</button>
+        </div>
+        <div class="mt-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <button id="studioLoginBtn" onclick="openGoogleLogin()" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 text-xs px-3.5 py-1.5 rounded-lg font-medium transition">🔑 Google login</button>
+            <span id="loginStatusBadge" class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-2.5 h-2.5 rounded-full bg-gray-600"></span>
+              Status controleren...
+            </span>
+          </div>
+          <span class="text-[11px] text-gray-500">Sessie blijft bewaard in data/google_profile</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bento metrics tellers -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card p-4">
+        <div class="text-xs text-gray-400 font-medium">Totaal geanalyseerd</div>
+        <div id="studioTotal" class="text-2xl font-bold text-white mt-1">0</div>
+        <div class="text-[11px] text-gray-500 mt-1">Profielen in batch</div>
+      </div>
+      <div class="card p-4 border-indigo-900/30">
+        <div class="text-xs text-indigo-400 font-medium">Keyword stuffing (Spoor A)</div>
+        <div id="studioRename" class="text-2xl font-bold text-indigo-300 mt-1">0</div>
+        <div class="text-[11px] text-gray-500 mt-1">Klaar voor Maps edit</div>
+      </div>
+      <div class="card p-4 border-red-900/30">
+        <div class="text-xs text-red-400 font-medium">Spookprofielen (Spoor B)</div>
+        <div id="studioRemove" class="text-2xl font-bold text-red-400 mt-1">0</div>
+        <div class="text-[11px] text-gray-500 mt-1">100% exact match spam</div>
+      </div>
+      <div class="card p-4 border-emerald-900/30">
+        <div class="text-xs text-emerald-400 font-medium">Schoon / ongewijzigd</div>
+        <div id="studioKept" class="text-2xl font-bold text-emerald-300 mt-1">0</div>
+        <div class="text-[11px] text-gray-500 mt-1">Geen overtreding</div>
+      </div>
+    </div>
+
+    <!-- Actiebalk -->
+    <div class="card p-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <button id="studioApplyAllBtn" onclick="applyAllEdits()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-4 py-2 rounded-lg font-semibold transition">⚡ Pas alle Maps bewerkingen automatisch toe</button>
+        <span id="studioProgress" class="text-xs text-gray-400"></span>
+      </div>
+      <div class="text-xs text-gray-400" id="studioBatchSummary">Voer een scan uit om resultaten te bewerken.</div>
+    </div>
+
+    <!-- Resultatentabel -->
+    <div class="card overflow-x-auto p-4">
+      <table class="w-full text-left text-xs text-gray-300">
+        <thead class="bg-gray-800/60 text-gray-400 uppercase text-[10px]">
+          <tr>
+            <th class="p-3">Bedrijfsnaam op Maps</th>
+            <th class="p-3">Echte handelsnaam</th>
+            <th class="p-3">Actie en spoor</th>
+            <th class="p-3 text-center">Zekerheid</th>
+            <th class="p-3">Uitvoeren</th>
+          </tr>
+        </thead>
+        <tbody id="studioTableBody" class="divide-y divide-gray-800">
+          <tr><td colspan="5" class="p-6 text-center text-gray-500">Nog geen scan uitgevoerd. Selecteer een niche hierboven of voer een zoekopdracht in.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Live status log -->
+    <div class="card p-4">
+      <h3 class="text-xs font-semibold text-gray-300 mb-2">Live activiteit en meldingen</h3>
+      <div id="studioLog" class="bg-black/60 rounded p-3 text-xs font-mono text-gray-400 h-28 overflow-y-auto space-y-1"></div>
+    </div>
+  </div>
+
   <script>
     let currentCy = null;
 
