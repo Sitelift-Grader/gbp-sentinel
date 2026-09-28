@@ -362,16 +362,11 @@ class NameSanitizer:
                 removed_parts.append(city)
                 reasons.append(f"Plaatsnaam gestript: '{city}'")
 
-        # Verwijder voorzetsels aan het begin of einde
-        for prep in self.prepositions:
-            if clean_name.lower().startswith(f"{prep} "):
-                clean_name = clean_name[len(prep)+1:].strip()
-                removed_parts.append(prep)
-                reasons.append(f"Voorzetsel verwijderd: '{prep}'")
-            if clean_name.lower().endswith(f" {prep}"):
-                clean_name = clean_name[:-(len(prep)+1)].strip()
-                removed_parts.append(prep)
-                reasons.append(f"Voorzetsel verwijderd: '{prep}'")
+        # Verwijder eventuele achtergebleven voorzetsels aan het einde indien er aanhangsels zijn gestript
+        if removed_parts:
+            for prep in ["in", "te", "op", "voor", "bij", "aan"]:
+                if clean_name.lower().endswith(f" {prep}"):
+                    clean_name = clean_name[:-(len(prep)+1)].strip()
 
         # Verwijder dubbele spaties en leestekens aan randen
         clean_name = re.sub(r"\s+", " ", clean_name).strip(" -|:,.")
