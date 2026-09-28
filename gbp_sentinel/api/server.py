@@ -1052,6 +1052,9 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
     // Init
     loadStats();
     loadNetworks();
+    if (window.location.hash === '#studio') {
+      switchTab('studio');
+    }
   </script>
 </body>
 </html>
