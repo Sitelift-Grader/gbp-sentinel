@@ -848,16 +848,205 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
     }
 
     function switchTab(tab) {
-      ['networks', 'businesses', 'policies', 'cases'].forEach(t => {
-        document.getElementById(`tab-${t}`).classList.add('hidden');
-        document.getElementById(`tabBtn-${t}`).className = 'pb-3 font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-200';
+      ['networks', 'businesses', 'policies', 'cases', 'studio'].forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (el) el.classList.add('hidden');
+        if (btn) btn.className = 'pb-3 font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-200';
       });
-      document.getElementById(`tab-${tab}`).classList.remove('hidden');
-      document.getElementById(`tabBtn-${tab}`).className = 'pb-3 font-medium border-b-2 border-indigo-500 text-indigo-400';
+      const activeEl = document.getElementById(`tab-${tab}`);
+      const activeBtn = document.getElementById(`tabBtn-${tab}`);
+      if (activeEl) activeEl.classList.remove('hidden');
+      if (activeBtn) activeBtn.className = 'pb-3 font-medium border-b-2 border-indigo-500 text-indigo-400';
 
       if (tab === 'businesses') loadBusinesses();
       if (tab === 'policies') loadPolicies();
       if (tab === 'cases') loadCases();
+      if (tab === 'studio') checkLoginStatus();
+    }
+
+    function appendStudioLog(msg, colorClass = 'text-gray-300') {
+      const log = document.getElementById('studioLog');
+      if (!log) return;
+      const line = document.createElement('div');
+      line.className = colorClass;
+      const now = new Date().toLocaleTimeString('nl-NL');
+      line.innerText = `[${now}] ${msg}`;
+      log.appendChild(line);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function setNiche(niche, city = '') {
+      document.getElementById('studioNiche').value = niche;
+      document.getElementById('studioCity').value = city;
+      runSanitizeScan();
+    }
+
+    async function checkLoginStatus() {
+      try {
+        const res = await fetch('/api/sanitize/login-status');
+        const d = await res.json();
+        const badge = document.getElementById('loginStatusBadge');
+        if (d.is_logged_in) {
+          badge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> <span class="text-emerald-400">Ingelogd bij Google</span>';
+        } else {
+          badge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> <span class="text-amber-400">Niet ingelogd (klik Google login)</span>';
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function openGoogleLogin() {
+      appendStudioLog('Google inlogvenster wordt geopend...', 'text-indigo-400');
+      try {
+        await fetch('/api/sanitize/login', { method: 'POST' });
+        appendStudioLog('Log in op je Google Account in het geopende browservenster. Sluit het venster wanneer je klaar bent.', 'text-gray-300');
+        setTimeout(checkLoginStatus, 5000);
+      } catch (e) {
+        appendStudioLog('Fout bij openen Google login: ' + e.message, 'text-red-400');
+      }
+    }
+
+    async function runSanitizeScan() {
+      const niche = document.getElementById('studioNiche').value.trim();
+      const city = document.getElementById('studioCity').value.trim();
+      const source = document.getElementById('studioSource').value;
+      const btn = document.getElementById('studioScanBtn');
+
+      if (!niche) {
+        alert('Vul eerst een niche of branche in.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Scannen en analyseren...';
+      appendStudioLog(`Scan gestart voor niche '${niche}' ${city ? 'in ' + city : ''} (bron: ${source})...`, 'text-indigo-300');
+
+      try {
+        const res = await fetch('/api/sanitize/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ niche, city, source, limit: 25 })
+        });
+        const d = await res.json();
+
+        document.getElementById('studioTotal').innerText = d.total || 0;
+        document.getElementById('studioRename').innerText = (d.renames || []).length;
+        document.getElementById('studioRemove').innerText = (d.removals || []).length;
+        document.getElementById('studioKept').innerText = (d.kept || []).length;
+
+        document.getElementById('studioBatchSummary').innerText = `Gevonden: ${(d.renames || []).length} te hernoemen, ${(d.removals || []).length} te verwijderen.`;
+
+        const tbody = document.getElementById('studioTableBody');
+        tbody.innerHTML = '';
+
+        const allItems = [...(d.renames || []), ...(d.removals || []), ...(d.kept || [])];
+        if (allItems.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-500">Geen profielen gevonden voor deze niche. Probeer een andere term of Live Google Maps scan.</td></tr>';
+          appendStudioLog('Geen profielen gevonden.', 'text-gray-400');
+          return;
+        }
+
+        allItems.forEach((item, idx) => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-gray-800/40 transition';
+          const isRename = item.action === 'RENAME';
+          const isRemove = item.action === 'REMOVE';
+
+          const badgeColor = isRename ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : isRemove ? 'bg-red-950 text-red-300 border border-red-800' : 'bg-gray-800 text-gray-400';
+          const badgeText = isRename ? 'Maps Edit (Spoor A)' : isRemove ? 'Redressal (Spoor B)' : 'Schoon (KEEP)';
+
+          tr.innerHTML = `
+            <td class="p-3 font-medium text-white max-w-xs truncate" title="${item.original_title}">${item.original_title}</td>
+            <td class="p-3">
+              ${isRename ? `<input id="nameInput_${idx}" value="${item.clean_name}" class="bg-gray-800 border border-gray-700 px-2 py-1 rounded text-xs text-emerald-300 w-full focus:outline-none focus:border-emerald-500 font-medium">` : isRemove ? `<span class="text-xs text-red-400 italic">Verwijdering vereist (pure zoekterm)</span>` : `<span class="text-xs text-gray-400">${item.clean_name}</span>`}
+            </td>
+            <td class="p-3">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${badgeText}</span>
+            </td>
+            <td class="p-3 text-center font-mono text-xs">
+              <span class="${item.confidence >= 80 ? 'text-emerald-400' : 'text-amber-400'}">${item.confidence}%</span>
+            </td>
+            <td class="p-3">
+              <div class="flex items-center space-x-2">
+                ${isRename ? `<button onclick="applySingleEdit(this, '${item.place_url}', ${idx}, ${item.edit_id || 'null'})" class="px-2.5 py-1 text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded transition flex items-center gap-1">⚡ Indienen</button>` : ''}
+                ${item.place_url ? `<a href="${item.place_url}" target="_blank" class="px-2 py-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 rounded border border-gray-700 transition">Maps</a>` : ''}
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        appendStudioLog(`Analyse voltooid: ${d.total} profielen verwerkt (${(d.renames || []).length} keyword stuffing gedetecteerd).`, 'text-emerald-400');
+      } catch (e) {
+        appendStudioLog('Fout bij uitvoeren scan: ' + e.message, 'text-red-400');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '🔍 Zoek en analyseer';
+      }
+    }
+
+    async function applySingleEdit(btn, placeUrl, idx, editId) {
+      const input = document.getElementById(`nameInput_${idx}`);
+      const newName = input ? input.value.trim() : '';
+
+      if (!newName) {
+        alert('Bedrijfsnaam mag niet leeg zijn.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Bezig...';
+      appendStudioLog(`Bewerking indienen voor '${newName}' op Google Maps...`, 'text-indigo-300');
+
+      try {
+        const res = await fetch('/api/sanitize/apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ place_url: placeUrl, new_name: newName, edit_id: editId })
+        });
+        const d = await res.json();
+
+        if (d.status === 'submitted') {
+          btn.className = 'px-2.5 py-1 text-xs bg-emerald-600 text-white rounded font-medium';
+          btn.innerText = '✅ Ingediend';
+          appendStudioLog(`Succesvol ingediend! Nieuwe naam: ${newName}`, 'text-emerald-400');
+        } else if (d.status === 'login_required') {
+          btn.className = 'px-2.5 py-1 text-xs bg-amber-600 text-white rounded font-medium';
+          btn.innerText = '⚠️ Login vereist';
+          appendStudioLog('Google login vereist om bewerkingen in te dienen. Klik op Google login hierboven.', 'text-amber-400');
+          openGoogleLogin();
+        } else {
+          btn.className = 'px-2.5 py-1 text-xs bg-red-600 text-white rounded font-medium';
+          btn.innerText = '❌ Mislukt';
+          appendStudioLog('Fout bij indienen: ' + (d.error || 'Onbekend'), 'text-red-400');
+        }
+      } catch (e) {
+        btn.disabled = false;
+        btn.innerText = '❌ Fout';
+        appendStudioLog('Netwerkfout: ' + e.message, 'text-red-400');
+      }
+    }
+
+    async function applyAllEdits() {
+      const btns = Array.from(document.querySelectorAll('#studioTableBody button')).filter(b => b.innerText.includes('Indienen'));
+      if (btns.length === 0) {
+        alert('Geen openstaande bewerkingen om in te dienen.');
+        return;
+      }
+
+      const progress = document.getElementById('studioProgress');
+      appendStudioLog(`Starten van ${btns.length} opeenvolgende Maps bewerkingen...`, 'text-indigo-300');
+
+      for (let i = 0; i < btns.length; i++) {
+        progress.innerText = `Bewerking ${i + 1} van ${btns.length} indienen...`;
+        btns[i].click();
+        await new Promise(r => setTimeout(r, 4500));
+      }
+
+      progress.innerText = 'Alle bewerkingen verwerkt!';
+      appendStudioLog('Alle bewerkingen in de batch zijn uitgevoerd.', 'text-emerald-400');
     }
 
     // Init
