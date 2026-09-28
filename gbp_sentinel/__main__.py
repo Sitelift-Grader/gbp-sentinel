@@ -589,6 +589,8 @@ def main():
 
     if not args.command or args.command in ("dashboard", "serve"):
         cmd_dashboard(args)
+    elif args.command == "studio":
+        cmd_studio(args)
     elif args.command == "report":
         cmd_report(args)
     elif args.command == "sanitize":
