@@ -326,6 +326,27 @@ def cmd_dashboard(args=None):
     print("=" * 65)
     uvicorn.run("gbp_sentinel.api.server:app", host=host, port=port, reload=False)
 
+def cmd_studio(args=None):
+    """Start de visuele Keyword Stuffing Studio in de browser."""
+    import uvicorn
+    import webbrowser
+    import threading
+    import time
+    host = getattr(args, "host", "127.0.0.1") if args else "127.0.0.1"
+    port = getattr(args, "port", 8000) if args else 8000
+    print("=" * 65)
+    print(" GBP SENTINEL: Keyword Stuffing Studio")
+    print("=" * 65)
+    print(f" Studio actief op: http://{host}:{port}/#studio")
+    print("=" * 65)
+
+    def _open():
+        time.sleep(1.2)
+        webbrowser.open(f"http://{host}:{port}/#studio")
+
+    threading.Thread(target=_open, daemon=True).start()
+    uvicorn.run("gbp_sentinel.api.server:app", host=host, port=port, reload=False)
+
 def cmd_report(args):
     """Genereer een forensisch Markdown onderzoeksrapport."""
     from .report_generator import ReportGenerator
