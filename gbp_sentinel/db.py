@@ -57,6 +57,21 @@ def init_db():
                     created_at TEXT DEFAULT CURRENT_TIMESTAMP
                 )
             """)
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS profile_edits (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    place_url TEXT NOT NULL,
+                    original_title TEXT NOT NULL,
+                    sanitized_title TEXT NOT NULL,
+                    action_type TEXT NOT NULL,
+                    remediation_track TEXT NOT NULL,
+                    status TEXT NOT NULL DEFAULT 'proposed',
+                    screenshot_path TEXT,
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                    last_verified_at TEXT,
+                    notes TEXT
+                )
+            """)
     finally:
         conn.close()
 
