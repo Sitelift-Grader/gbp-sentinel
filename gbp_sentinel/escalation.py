@@ -245,6 +245,102 @@ E-mail: {config.SUBMITTER_EMAIL}
             "category": "privacy_regulator"
         }
 
+    def generate_afm_complaint(
+        self,
+        target_name: str,
+        kvk: str,
+        hq: str,
+        website: str,
+        total_sites: int,
+        csv_path: Path
+    ) -> Dict[str, str]:
+        """Generate financial conduct complaint for Autoriteit Financiele Markten (AFM)."""
+        subject = f"Handhavingsverzoek Wft en oneerlijke handelspraktijken: Finance Prospects B.V. (vergunning 12019228 / KvK 08196184)"
+        body = f"""Aan de Autoriteit Financiele Markten (AFM),
+Afdeling Toezicht Financiele Dienstverlening,
+
+Betreft: Signaal oneerlijke handelspraktijken en schending van informatieplichten door vergunninghouder Finance Prospects B.V.
+
+Gegevens van de onder toezicht staande entiteit:
+- Bedrijfsnaam: Finance Prospects B.V. (handelend onder o.a. Nationaal Bespaarcentrum, Duurzaam Lenen, Hypotheek Connect)
+- AFM-vergunningnummer: 12019228
+- KvK-nummer: 08196184
+- Vestigingsadres: Boogschutterstraat 1, 7324 AE Apeldoorn (verzamelgebouw Toren Noord)
+
+Omschrijving van de overtredingen en gedragingen:
+1. Misleidende benaming en autoriteitssuggestie (art. 4:19 Wft):
+Onder de handelsnaam 'Nationaal Bespaarcentrum' (nationaalbespaarcentrum.nl) wordt bij consumenten de indruk gewekt dat het om een onafhankelijk, door de overheid ingesteld of gesubsidieerd nationaal bespaarinstituut gaat. In werkelijkheid betreft het een commerciele leadgenerator die aanvragen voor hypotheken en verduurzamingsleningen doorverkoopt aan aangesloten provisiebetalende hypotheekkantoren.
+
+2. Ontbreken van transparantie over leadverkoop en verdienmodel:
+Consumenten die rekenmodules en bespaarchecks invullen op platforms zoals nationaalbespaarcentrum.nl en duurzaamlenen.nl, worden onvoldoende en misleidend geinformeerd dat hun gegevens worden geveild als commerciele lead. De bezoeker denkt een onafhankelijke berekening uit te voeren, maar wordt vervolgens gebeld door externe commerciele adviseurs.
+
+3. Cluster van satelliet-leadgen portals:
+Vergunninghouder exploiteert vanuit hetzelfde adres (Boogschutterstraat 1 te Apeldoorn) ruim 20 satellietdomeinen (waaronder hypotheek-berekenen.nl, hypotheek-check.nu, overwaardeverzilveren.nl, verduurzaam-hypotheek.nl, watispayroll.nl) die uitsluitend fungeren als leadtrechter.
+
+4. Samenloop op hetzelfde verzameladres:
+Op ditzelfde kantooradres (Boogschutterstraat 1 Apeldoorn) opereert tevens het beruchte leadgenbedrijf Kies Je Leverancier B.V. (104+ websites, recent ontmaskerd door AVROTROS Radar wegens grootschalige consumentenmisleiding en doorverkoop van klusleads).
+
+Verzoek aan de AFM:
+Wij verzoeken de AFM te toetsen of Finance Prospects B.V. handelt conform de integriteits- en zorgplichtnormen van de Wft en passende handhavingsmaatregelen te treffen.
+
+Bijlage: CSV-dossier van het netwerk op Boogschutterstraat 1 Apeldoorn.
+
+Melder:
+{config.SUBMITTER_NAME} ({config.SUBMITTER_ORG})
+E-mail: {config.SUBMITTER_EMAIL}
+"""
+        return {
+            "recipient": "ondernemersloket@afm.nl",
+            "subject": subject,
+            "body": body,
+            "category": "financial_regulator"
+        }
+
+    def generate_acm_formal_report(
+        self,
+        target_name: str,
+        kvk: str,
+        hq: str,
+        website: str,
+        total_sites: int,
+        csv_path: Path
+    ) -> Dict[str, str]:
+        """Generate comprehensive enforcement dossier for Autoriteit Consument en Markt (ACM)."""
+        subject = f"Handhavingsverzoek wet oneerlijke handelspraktijken: leadgeneratie-hub Boogschutterstraat 1 Apeldoorn ({total_sites} websites)"
+        body = f"""Aan de Autoriteit Consument en Markt (ACM),
+Directie Consumenten en Handhaving,
+
+Betreft: Handhavingsverzoek wegens structurele overtreding van de Wet oneerlijke handelspraktijken (art. 6:193a e.v. BW) door leadgeneratiebedrijven gevestigd aan Boogschutterstraat 1, 7324 AE Apeldoorn (Toren Noord).
+
+Betrokken entiteiten:
+1. Kies Je Leverancier B.V. (KvK 57722102) / BesteLeads.nl / VrijblijvendeOfferte.nl
+2. Finance Prospects B.V. (KvK 08196184, AFM 12019228) / Nationaal Bespaarcentrum / Duurzaam Lenen
+
+Feiten en schendingen:
+1. Misleidende consumentenclaims (art. 6:193c BW):
+Kies Je Leverancier B.V. exploiteert 104+ websites (zoals vloerverwarmingactie.nl, warmtepompactie.nl, debestedakdekker.nl) waarop expliciet wordt gegarandeerd dat het werk wordt uitgevoerd door 'eigen monteurs' met 'eigen bussen'. In werkelijkheid heeft het bedrijf geen monteurs en worden aanvragen als lead geveild aan tussenpersonen met enorme opslagen. Deze praktijk is nationaal ontmaskerd in AVROTROS Radar (september 2026, YouTube WfKFeZ0d4GI).
+
+2. Misleidende autoriteit en schijnonafhankelijkheid:
+Finance Prospects B.V. opereert onder namen zoals 'Nationaal Bespaarcentrum' om de schijn van een onafhankelijke instantie te wekken, waarna financiele en hypotheekaanvragen worden doorverkocht.
+
+3. Schaal en maatschappelijke impact:
+Het cluster op Boogschutterstraat 1 telt in totaal {total_sites} geverifieerde websites die landelijk adverteren en consumenten systematisch misleiden over de identiteit van de dienstverlener en de totstandkoming van de prijs.
+
+Wij verzoeken de ACM om ambtshalve een onderzoek in te stellen en handhavend op te treden met een last onder dwangsom en/of bestuurlijke boete.
+
+Bijgevoegd: Volledig CSV-dossier met alle {total_sites} domeinen en overtredingen.
+
+Indiener:
+{config.SUBMITTER_NAME} ({config.SUBMITTER_ORG})
+E-mail: {config.SUBMITTER_EMAIL}
+"""
+        return {
+            "recipient": "handhaving@acm.nl",
+            "subject": subject,
+            "body": body,
+            "category": "market_regulator"
+        }
+
     def create_eml_file(
         self,
         to_email: str,
