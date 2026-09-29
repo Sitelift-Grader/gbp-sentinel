@@ -408,6 +408,8 @@ E-mail: {config.SUBMITTER_EMAIL}
             self.generate_branch_notice("hollandsolar", target_name, kvk, hq, website, gtm, phone, total_sites, csv_path),
             self.generate_rcc_complaint(target_name, kvk, hq, website, total_sites, csv_path),
             self.generate_ap_notice(target_name, kvk, hq, website, gtm, total_sites, csv_path),
+            self.generate_afm_complaint(target_name, kvk, hq, website, total_sites, csv_path),
+            self.generate_acm_formal_report(target_name, kvk, hq, website, total_sites, csv_path),
         ]
 
         results = []
