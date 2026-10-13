@@ -28,8 +28,16 @@ class RemediationEngine:
         url = listing.get("url") or ""
         web = listing.get("website") or ""
         addr = listing.get("address") or ""
+        landing_h1 = listing.get("landing_h1") or listing.get("h1") or None
+        schema_name = listing.get("schema_name") or None
 
-        analysis = self.sanitizer.sanitize(raw_title=title, website_url=web, address=addr)
+        analysis = self.sanitizer.sanitize(
+            raw_title=title,
+            website_url=web,
+            address=addr,
+            landing_h1=landing_h1,
+            schema_name=schema_name
+        )
         action = analysis["action"]
         clean_name = analysis["clean_name"]
 
