@@ -145,11 +145,17 @@ class NameSanitizer:
         s = re.sub(r"\s+", " ", s)
         return s.strip(" \t\r\n,;|:-/.")
 
-    def _is_service_or_location_segment(self, segment: str) -> bool:
+    def _is_service_or_location_segment(self, segment: str, domain_brand: str = None) -> bool:
         """Controleert of een segment hoofdzakelijk uit zoekwoorden, steden of claims bestaat."""
         lower = segment.lower().strip()
         if not lower:
             return True
+
+        # Als segment overeenkomt met de domeinnaam, is het gegarandeerd een merksegment
+        if domain_brand:
+            clean_seg = re.sub(r"[^\w]", "", lower)
+            if domain_brand in clean_seg or clean_seg in domain_brand:
+                return False
 
         # Exact match op bekende service of stad
         if lower in self.service_keywords or lower in self.cities:
