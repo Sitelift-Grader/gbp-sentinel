@@ -320,6 +320,10 @@ class NameSanitizer:
                             best_len = len(cand)
                             chosen_brand = cand
 
+                for cand in candidate_brands:
+                    if cand != chosen_brand and cand not in removed_parts:
+                        removed_parts.append(cand)
+
             # Strip eventuele steden die nog in het gekozen segment hangen
             for city in self.cities:
                 chosen_brand = re.sub(rf"\b{city}\b", "", chosen_brand, flags=re.IGNORECASE).strip()
