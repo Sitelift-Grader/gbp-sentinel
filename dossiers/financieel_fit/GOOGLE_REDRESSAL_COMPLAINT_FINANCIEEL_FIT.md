@@ -1,6 +1,6 @@
 # Google Business Profile Redressal Complaint: Financieel Fit Network
 
-**Datum:** C:\Users\danny\.gemini\antigravity\scratch\gbp-sentinel  
+**Datum:** 13 oktober 2026  
 **Doelwit:** Financieel Fit B.V. / Yellow Hive B.V.  
 **Hoofdkantoor:** Van Dedemstraat 198, 4611 BE Bergen op Zoom  
 **Website:** https://www.financieelfit.nl  
