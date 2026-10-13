@@ -123,7 +123,9 @@ class NameSanitizer:
             "reparatie", "spoedservice", "sleutel", "dakdekker", "gevel",
             "schoonmaak", "hovenier", "beveiliging", "installatie", "montage",
             "reiniging", "renovatie", "verbouwing", "isolatie", "verwarming",
-            "elektra", "loodgieter", "cv", "ketel", "dak", "kozijn", "raam"
+            "elektra", "loodgieter", "cv", "ketel", "dak", "kozijn", "raam",
+            "hypotheek", "hypotheken", "verzekering", "verzekeringen", "financieel",
+            "advies", "pensioen", "krediet", "vermogen"
         })
 
         # Woorden die vaak in merknamen voorkomen en nooit als spam worden gezien
