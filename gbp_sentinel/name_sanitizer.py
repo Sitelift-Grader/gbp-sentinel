@@ -230,7 +230,14 @@ class NameSanitizer:
         # Anders twijfelachtig
         return False
 
-    def sanitize(self, raw_title: str, website_url: str = None, address: str = None) -> dict[str, Any]:
+    def sanitize(
+        self,
+        raw_title: str,
+        website_url: str = None,
+        address: str = None,
+        landing_h1: str = None,
+        schema_name: str = None
+    ) -> dict[str, Any]:
         raw = (raw_title or "").strip()
         if not raw:
             return {
@@ -241,6 +248,51 @@ class NameSanitizer:
                 "confidence": 0,
                 "reasons": ["Lege titel opgegeven"]
             }
+
+        # Verificatie op basis van landingspagina bewijslast (H1 of Schema)
+        ground_truth = (landing_h1 or schema_name or "").strip()
+        if ground_truth:
+            simple_raw = re.sub(r"[^\w]", "", raw.lower())
+            simple_truth = re.sub(r"[^\w]", "", ground_truth.lower())
+
+            if simple_raw == simple_truth:
+                return {
+                    "action": "KEEP",
+                    "clean_name": raw,
+                    "original_name": raw,
+                    "removed_parts": [],
+                    "confidence": 98,
+                    "reasons": [f"Profielnaam komt overeen met de officiële H1/Schema van de bestemmingspagina ('{ground_truth}')"]
+                }
+
+            brand_words = [w.lower() for w in re.findall(r"\w+", ground_truth) if len(w) > 2]
+            matches_brand = all(w in raw.lower() for w in brand_words) or simple_truth in simple_raw
+            if matches_brand:
+                raw_segments = [self._clean_segment(s) for s in self.delimiter_pattern.split(raw) if s.strip()]
+                clean_target = landing_h1.strip() if landing_h1 else ground_truth
+
+                removed = []
+                for seg in raw_segments:
+                    clean_seg = re.sub(r"[^\w]", "", seg.lower())
+                    if clean_seg not in simple_truth and simple_truth not in clean_seg:
+                        removed.append(seg)
+
+                if not removed and raw != clean_target:
+                    diff = raw.replace(clean_target, "").strip(" -|:,./")
+                    if diff:
+                        removed.append(diff)
+
+                return {
+                    "action": "RENAME",
+                    "clean_name": clean_target,
+                    "original_name": raw,
+                    "removed_parts": [p for p in removed if p],
+                    "confidence": 98,
+                    "reasons": [
+                        f"Officiële handelsnaam geverifieerd via bestemmingspagina H1 ('{clean_target}').",
+                        f"Overtollige toevoegingen verwijderd: {', '.join(removed)}"
+                    ]
+                }
 
         reasons = []
         removed_parts = []
