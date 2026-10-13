@@ -332,10 +332,11 @@ class NameSanitizer:
 
         if len(cleaned_segments) > 1:
             reasons.append(f"Scheidingstekens gedetecteerd met {len(cleaned_segments)} segmenten")
-            
+            domain_brand = self._extract_brand_from_domain(website_url)
+
             candidate_brands = []
             for seg in cleaned_segments:
-                if self._is_service_or_location_segment(seg):
+                if self._is_service_or_location_segment(seg, domain_brand=domain_brand):
                     removed_parts.append(seg)
                 else:
                     candidate_brands.append(seg)
@@ -350,8 +351,6 @@ class NameSanitizer:
                     "confidence": 95,
                     "reasons": ["Alle segmenten bestaan uit generieke zoekwoorden of locaties zonder merknaam"]
                 }
-
-            domain_brand = self._extract_brand_from_domain(website_url)
 
             # Kies het beste merksegment
             chosen_brand = candidate_brands[0]
