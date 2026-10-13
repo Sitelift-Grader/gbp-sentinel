@@ -13,8 +13,8 @@ class NameSanitizer:
     """
 
     def __init__(self):
-        # Scheidingstekens die vaak worden gebruikt voor keyword stuffing
-        self.delimiter_pattern = re.compile(r"\s*(?:\||--?|–|—|/|:|\b-\b|•|·|\+)\s*")
+        # Scheidingstekens die vaak worden gebruikt voor keyword stuffing (inclusief pseudo-pipe capital I)
+        self.delimiter_pattern = re.compile(r"\s*(?:\||--?|–|—|/|:|\b-\b|•|·|\+|\bI\b)\s*")
 
         # Niche-diensten die ten onrechte in titels worden geplakt
         self.service_keywords = {
