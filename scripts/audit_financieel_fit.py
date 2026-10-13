@@ -44,10 +44,17 @@ async def resolve_gmaps_profile(page, query: str) -> dict:
         title = ""
         if await title_el.count() > 0:
             title = await title_el.first.inner_text()
-        else:
-            cards = page.locator('div.qBF1Pd')
-            if await cards.count() > 0:
-                title = await cards.first.inner_text()
+
+        # Als er een lijst met resultaten is, klik op de eerste kaart
+        if title == "Resultaten" or not title:
+            first_card = page.locator('div[role="feed"] a[href*="/maps/place/"], div.Nv2PK a[href*="/maps/place/"], a[href*="/maps/place/"]').first
+            if await first_card.count() > 0:
+                await first_card.click()
+                await page.wait_for_timeout(2500)
+                current_url = page.url
+                place_h1 = page.locator('h1.DUwDvf, h1')
+                if await place_h1.count() > 0:
+                    title = await place_h1.first.inner_text()
 
         return {
             "title": title.strip(),
