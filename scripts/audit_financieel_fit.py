@@ -72,6 +72,7 @@ async def resolve_gmaps_profile(page, query: str) -> dict:
 
 async def main():
     parser = argparse.ArgumentParser(description="Financieel Fit GBP Audit & H1 Sanitize Runner")
+    parser.add_argument("--vestiging", type=str, default="", help="Filter op specifieke vestiging/stad (bijv. 'weert' of 'almere')")
     parser.add_argument("--limit", type=int, default=10, help="Aantal vestigingen om te auditen (default: 10, 0 voor alle 90)")
     parser.add_argument("--execute", action="store_true", help="Voer bewerkingsvoorstellen daadwerkelijk uit via Google Maps")
     parser.add_argument("--save-db", action="store_true", default=True, help="Sla bewerkingsvoorstellen op in de database")
@@ -82,7 +83,11 @@ async def main():
     vestigingen = auditor.scrape_chain_vestigingen()
     print(f"      Gevonden: {len(vestigingen)} vestigingen.")
 
-    if args.limit > 0:
+    if args.vestiging:
+        query_v = args.vestiging.lower().strip()
+        vestigingen = [v for v in vestigingen if query_v in v["slug"].lower() or query_v in v["city_guess"].lower()]
+        print(f"      Gefilterd op '{args.vestiging}': {len(vestigingen)} vestigingen gevonden.")
+    elif args.limit > 0:
         vestigingen = vestigingen[:args.limit]
         print(f"      Audit beperkt tot eerste {len(vestigingen)} vestigingen (--limit {args.limit}).")
 
