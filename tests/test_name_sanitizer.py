@@ -67,6 +67,29 @@ class TestNameSanitizer(unittest.TestCase):
         self.assertEqual(res["clean_name"], "Melanin Nails & Beauty")
         self.assertIn("Opleiding nagelstylist Amsterdam & Nagelstudio", res["removed_parts"])
 
+    def test_financieel_fit_with_landing_h1(self):
+        raw = "Financieel Fit Weert I Marc op 't Roodt - Hypotheken, Verzekeringen & Financieel Advies"
+        res = self.sanitizer.sanitize(
+            raw,
+            website_url="https://www.financieelfit.nl/vestigingen/weert/",
+            landing_h1="Financieel Fit | Weert",
+            schema_name="Financieel Fit Weert"
+        )
+        self.assertEqual(res["action"], "RENAME")
+        self.assertEqual(res["clean_name"], "Financieel Fit | Weert")
+        self.assertIn("Marc op 't Roodt", res["removed_parts"])
+        self.assertIn("Hypotheken Verzekeringen & Financieel Advies", res["removed_parts"])
+
+    def test_financieel_fit_fallback_strips_services_and_advisor(self):
+        raw = "Financieel Fit Weert I Marc op 't Roodt - Hypotheken, Verzekeringen & Financieel Advies"
+        res = self.sanitizer.sanitize(
+            raw,
+            website_url="https://www.financieelfit.nl/vestigingen/weert/"
+        )
+        self.assertEqual(res["action"], "RENAME")
+        self.assertEqual(res["clean_name"], "Financieel Fit")
+        self.assertIn("Marc op 't Roodt", res["removed_parts"])
+
 
 if __name__ == "__main__":
     unittest.main()
