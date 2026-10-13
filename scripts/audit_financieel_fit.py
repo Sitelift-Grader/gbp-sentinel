@@ -188,6 +188,21 @@ async def main():
     renames = [r for r in results if r["action"] == "RENAME"]
     print(f"      Gevallen met keyword stuffing / edits nodig: {len(renames)} ({len(renames)/len(results)*100:.1f}%)")
 
+    if args.execute:
+        print("\n[5/5] Uitvoeren van bewerkingsvoorstellen via Google Maps (Playwright)...")
+        editor = MapsEditor(headless=True)
+        is_logged_in = await editor.check_login_status()
+        if not is_logged_in:
+            print("      [MapsEditor] Geen actieve Google login gedetecteerd in data/google_profile.")
+            print("      Tip: gebruik editor.open_interactive_login() om éénmalig in te loggen met een Google/Local Guides profiel.")
+
+        for item in renames:
+            if not item.get("gbp_url"):
+                continue
+            print(f"      Indienen voor {item['city']}: '{item['proposed_name']}'...")
+            res = await editor.suggest_name_edit(place_url=item["gbp_url"], new_name=item["proposed_name"])
+            print(f"      Status: {res.get('status')} ({res.get('error') or 'OK'}) | Screenshot: {res.get('screenshot')}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
