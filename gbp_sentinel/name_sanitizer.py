@@ -63,7 +63,13 @@ class NameSanitizer:
             "verhuisbedrijf", "verhuizers", "transportbedrijf", "witgoed reparatie",
             "wasmachine reparatie", "fietsenmaker", "fietsenwinkel", "fietsreparatie",
             "drukkerij", "drukwerk", "reclamebureau", "signmaking",
-            "schoorsteenveger", "rioolinspectie", "fundering", "onderhoudsbedrijf"
+            "schoorsteenveger", "rioolinspectie", "fundering", "onderhoudsbedrijf",
+            # Financiële diensten en hypotheken
+            "hypotheek", "hypotheken", "hypotheekadvies", "hypotheekadviseur",
+            "verzekering", "verzekeringen", "financieel advies", "financieel adviseur",
+            "pensioen", "pensioenadvies", "krediet", "kredieten", "lening", "leningen",
+            "vermogensadvies", "vermogensopbouw", "belastingaangifte", "financiele planning",
+            "assurantie", "assurantien", "makelaar", "makelaardij"
         }
 
         # Nederlandse steden en regio's die vaak worden toegevoegd
